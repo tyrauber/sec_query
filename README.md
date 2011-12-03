@@ -10,7 +10,7 @@ Additionally retrieve some, or all, Relationships, Transactions and Filings as r
 
 To install the 'sec_query' Ruby Gem run the following command at the terminal prompt.
 
-`gem install sec_query'
+`gem install sec_query`
 
 For an example of what type of information 'sec_query' can retrieve, run the following command:
 
@@ -18,8 +18,10 @@ For an example of what type of information 'sec_query' can retrieve, run the fol
 
 If running 'sec_query' from the command prompt in irb:
 
-`$ irb -rubygems`
+`irb -rubygems`
+
 `require "sec_query"`
+
 `include SecQuery`
 
 ## Functionality
@@ -29,19 +31,26 @@ If running 'sec_query' from the command prompt in irb:
 #### By Stock Symbol:
 
 `SecQuery::Entity.find("appl")`
+
 Or:
+
 `SecQuery::Entity.find({:symbol=> "aapl"})`
  
 #### By Name:
 
 `SecQuery::Entity.find("Apple, Inc.")`
+
 Or:
+
 `SecQuery::Entity.find({:name=> "Apple, Inc."})`
 
 #### By Central Index Key, CIK:
 
 `SecQuery::Entity.find( "0000320193")`
-Or: SecQuery::Entity.find({:cik=> "0000320193"})
+
+Or: 
+
+`SecQuery::Entity.find({:cik=> "0000320193"})`
 
 #### FIND PERSON:
 
@@ -56,9 +65,13 @@ Middle initial or name is optional, but helps when there are multiple results fo
 To return everything - All Relationships, Transactions and Filings - that the SEC Edgar system has stored on a company or person, do any of the following commands (They all do the same thing.):
 
 `SecQuery::Entity.find("AAPL",  true)`
+
 `SecQuery::Entity.find("AAPL",  true, true, true)`
+
 `SecQuery::Entity.find("AAPL", {:relationships=> true, :transactions=> true, :filings=>true})`
+
 `SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> true, :filings=>true)`
+
 `SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> {:start=> 0, :count=> 80}, :filings=>{:start=> 0, :count=> 80})`
 
 You may also limit either the transactions or filings by adding the :limit to the transaction or filing arguements.
@@ -74,6 +87,7 @@ The above query will only return the last 20 transactions and filings.  This is 
 For doing terminal queries, there is a log function that formats and prints the entity data to your terminal window.
 
 `entity = SecQuery::Entity.find("AAPL",  true)`
+
 `SecQuery::Entity.log(entity)`
 
 
@@ -82,13 +96,20 @@ For doing terminal queries, there is a log function that formats and prints the 
 This gem contains four classes - Entity, Relationship, Transaction and Filing.  Each Class contains the listed fields. (Everything I could parse out of the query results.)
 
 * Entity
-> :first, :middle, :last, :name, :symbol, :cik, :url, :type, :sic, :location, :state_of_inc, :formerly, :mailing_address, :business_address, :relationships, :transactions, :filings
+
+`:first, :middle, :last, :name, :symbol, :cik, :url, :type, :sic, :location, :state_of_inc, :formerly, :mailing_address, :business_address, :relationships, :transactions, :filings`
+
 * Relationship
-> :name, :position, :date, :cik
+
+`:name, :position, :date, :cik`
+
 * Transaction
-> :filing_number, :code, :date, :reporting_owner, :form, :type, :modes, :shares, :price, :owned, :number, :owner_cik, :security_name, :deemed, :exercise, :nature, :derivative, :underlying_1, :exercised,	:underlying_2, :expires, :underlying_3
+
+`:filing_number, :code, :date, :reporting_owner, :form, :type, :modes, :shares, :price, :owned, :number, :owner_cik, :security_name, :deemed, :exercise, :nature, :derivative, :underlying_1, :exercised,	:underlying_2, :expires, :underlying_3`
+
 * Filing
-> :cik, :title, :summary, :link, :term, :date, :file_id
+
+`:cik, :title, :summary, :link, :term, :date, :file_id`
 
 ## To Whom It May Concern at the SEC
 
