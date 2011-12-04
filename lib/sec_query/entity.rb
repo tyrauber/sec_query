@@ -30,7 +30,10 @@ module SecQuery
             temp[:url] = Entity.url(entity_args)
             temp[:cik] = Entity.cik(temp[:url], entity_args)
         
-            if !temp[:cik]; return false; end
+            if !temp[:cik] or temp[:cik] == ""; 
+                puts "No Entity found for query:  "+temp[:url]
+                return false; 
+            end
     
             ### Get Document and Entity Type
             doc = Entity.document(temp[:cik])
