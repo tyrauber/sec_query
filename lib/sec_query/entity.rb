@@ -114,6 +114,7 @@ module SecQuery
                 end
             else
                 cik = data.inner_text.scan(/\(([^)]+)\)/).to_s
+                cik = cik.gsub('[["', '').gsub('"]]','')
                 return cik
             end
         end
