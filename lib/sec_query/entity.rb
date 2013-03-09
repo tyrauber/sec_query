@@ -97,7 +97,7 @@ module SecQuery
         def self.cik(url, entity)
             response = Entity.query(url+"&output=atom")
             doc = Hpricot::XML(response)
-            data = doc.search(:title)[0];
+            data = doc.search("//feed/title")[0];
             if data.inner_text == "EDGAR Search Results"
                 tbl =  doc.search("//span[@class='companyMatch']")
                 if tbl && tbl.innerHTML != ""
