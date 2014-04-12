@@ -49,19 +49,6 @@ module SecQuery
       string.to_s.gsub(' ', '+')
     end
 
-    def self.validate_args(args)
-      if args.is_a?(String)
-        if args.length == 10 && Float(args)
-          args = { cik: args }
-        elsif args.length == 4
-          args = { symbol: args }
-        else
-          args = { name: args }
-        end
-      end
-      args
-    end
-
     def self.url(params)
       browse_edgar = 'http://www.sec.gov/cgi-bin/browse-edgar?'
       "#{browse_edgar}#{params}&action=getcompany"

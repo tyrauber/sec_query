@@ -1,8 +1,12 @@
 # encoding: UTF-8
 
 module SecQuery
+  # => SecQuery::Filing
+  # SecQuery::Filing requests and parses filings for any given SecQuery::Entity
   class Filing
-    attr_accessor :cik, :accession_nunber, :act, :file_number, :file_number_href, :filing_date, :filing_href, :filing_type, :film_number, :form_name, :size, :type
+    attr_accessor :cik, :accession_nunber, :act, :file_number,
+                  :file_number_href, :filing_date, :filing_href,
+                  :filing_type, :film_number, :form_name, :size, :type
 
     def initialize(cik, filing)
       @cik = cik
@@ -78,10 +82,15 @@ module SecQuery
       end
     end
 
-    def self.find(cik, start=0, count=80)
-      url = "http://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=#{cik}&count=#{count}&start=#{start}"
-      response = Entity.query(url+"&output=atom")
+    def self.find(cik, start = 0, count = 80)
+      browse_edgar = 'http://www.sec.gov/cgi-bin/browse-edgar?'
+      params = "action=getcompany&CIK=#{cik}&count=#{count}&start=#{start}"
+      response = Entity.query("#{browse_edgar}#{params}&output=atom")
       document = Nokogiri::HTML(response)
+      parse(cik, document)
+    end
+
+    def self.parse(cik, document)
       filings = []
       if document.xpath('//content').to_s.length > 0
         document.xpath('//content').each do |e|
@@ -90,7 +99,7 @@ module SecQuery
           end
         end
       end
-      return filings
+      filings
     end
   end
 end
