@@ -1,1 +1,1 @@
-require "sec_query"
+require 'sec_query'
