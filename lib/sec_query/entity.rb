@@ -17,9 +17,9 @@ module SecQuery
       temp[:url] = Entity.url(entity_args)
       temp[:cik] = Entity.cik(temp[:url], entity_args)
 
-      if !temp[:cik] or temp[:cik] == "";
+      if !temp[:cik] or temp[:cik] == ""
         puts "No Entity found for query:  "+temp[:url]
-        return false;
+        return false
       end
 
       ### Get Document and Entity Type
@@ -27,11 +27,11 @@ module SecQuery
       temp = Entity.parse_document(temp, doc)
 
       ### Get Additional Arguments and Query Additional Details
-      if !options.empty?;
+      if !options.empty?
         temp[:transactions]=[]
         temp[:filings] =[]
-        options = Entity.options(temp, options);
-        temp = Entity.details(temp, options);
+        options = Entity.options(temp, options)
+        temp = Entity.details(temp, options)
       end
 
       ###  Return entity Object
@@ -75,13 +75,13 @@ module SecQuery
       end
       string = string.to_s.gsub(" ", "+")
       url = "http://www.sec.gov/cgi-bin/browse-edgar?"+string+"&action=getcompany"
-      return url
+      url
     end
 
     def self.cik(url, entity)
       response = Entity.query(url+"&output=atom")
       doc = Hpricot::XML(response)
-      data = doc.search("//feed/title")[0];
+      data = doc.search("//feed/title")[0]
       if data.inner_text == "EDGAR Search Results"
         tbl =  doc.search("//span[@class='companyMatch']")
         if tbl && tbl.innerHTML != ""
@@ -90,11 +90,11 @@ module SecQuery
             td = tr.search("td")
             if td[1] != nil && entity[:middle] != nil && td[1].innerHTML.downcase == (entity[:last]+" "+entity[:first]+" "+entity[:middle]).downcase or td[1] != nil && td[1].innerHTML.downcase == (entity[:last]+" "+entity[:first]).downcase
               cik = td[0].search("a").innerHTML
-              return cik;
+              return cik
             end
           end
         else
-          return false;
+          return false
         end
       else
         cik = data.inner_text.scan(/\(([^)]+)\)/).to_s
@@ -118,8 +118,7 @@ module SecQuery
         type = "owner"
         entity = doc.search("//table").search("//td").search("b[text()*='"+text+"']")
       end
-      return [doc, type]
-
+      [doc, type]
     end
 
     def self.parse_document(temp, doc)
@@ -159,52 +158,50 @@ module SecQuery
       if lines[1] != nil and lines[1].search("font")
         info[:formerly] = lines[1].search("font").innerHTML.gsub("formerly: ", "").gsub("<br />", "").gsub("\n", "; ")
       end
-      return info
+      info
     end
 
 
     def self.business_address(doc)
       addie = doc.search("//table").search("//td").search("b[text()*='Business Address']")
-      if !addie.empty?;
-        business_address = addie[0].parent.innerHTML.gsub('<b class="blue">Business Address</b>', '').gsub('<br />', ' ');
+      if !addie.empty?
+        business_address = addie[0].parent.innerHTML.gsub('<b class="blue">Business Address</b>', '').gsub('<br />', ' ')
         return business_address
       else
-        return false;
+        return false
       end
     end
 
     def self.mailing_address(doc)
       addie = doc.search("//table").search("//td").search("b[text()*='Mailing Address']")
-      if !addie.empty?;
-        mailing_address = addie[0].parent.innerHTML.gsub('<b class="blue">Mailing Address</b>', '').gsub('<br />', ' ');
+      if !addie.empty?
+        mailing_address = addie[0].parent.innerHTML.gsub('<b class="blue">Mailing Address</b>', '').gsub('<br />', ' ')
         return mailing_address
       else
-        return false;
+        return false
       end
     end
 
 
     def self.options(temp, options)
-
-      args={}
-      if options.is_a?(Array) && options.length == 1 && options[0] == true;
-        args[:relationships] = true;
-        args[:transactions]= true;
-        args[:filings] = true;
+      args = {}
+      if options.is_a?(Array) && options.length == 1 && options[0] == true
+        args[:relationships] = true
+        args[:transactions]= true
+        args[:filings] = true
       elsif options.is_a?(Array) && options.length > 1
-        args[:relationships] = options[0];
-        args[:transactions]= options[1];
-        args[:filings] = options[2];
+        args[:relationships] = options[0]
+        args[:transactions]= options[1]
+        args[:filings] = options[2]
       elsif options[0].is_a?(Hash)
-        args[:relationships] = options[0][:relationships];
-        args[:transactions]= options[0][:transactions];
-        args[:filings] = options[0][:filings];
+        args[:relationships] = options[0][:relationships]
+        args[:transactions]= options[0][:transactions]
+        args[:filings] = options[0][:filings]
       end
-      return args;
+      args
     end
 
     def self.details(temp, options)
-
       ## Get Relationships for entity
       if options[:relationships] == true
         relationships = Relationship.find(temp)
@@ -218,37 +215,38 @@ module SecQuery
         temp = Transaction.find(temp, nil, nil, nil)
       end
 
-
       ## Get Filings for entity
-
       if options[:filings] != nil and options[:filings].is_a?(Hash)
         temp = Filing.find(temp, options[:filings][:start], options[:filings][:count], options[:filings][:limit])
       elsif options[:filings] != nil and options[:filings] == true
         temp = Filing.find(temp, nil, nil, nil)
       end
 
-      return temp;
+      temp
     end
 
-
     def self.log(entity)
-
       if entity != false
         puts "\n\t# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #\n\n"
         puts "\t"+entity.name
-        puts "\t("+entity.cik+")"
+        puts "\t(#{ entity.cik })"
+
         if entity.formerly && entity.formerly != ""
           puts "\tFormerly: "+entity.formerly
         end
+
         if entity.sic
           puts "\tSIC = "+entity.sic
         end
+
         if entity.location
           puts "\tLocation: "+entity.location+", "
         end
+
         if entity.state_of_inc
           puts "\tState of Incorporation: "+entity.state_of_inc
         end
+
         if entity.mailing_address
           puts "\tMailing Address:\t"+ entity.mailing_address.inspect.gsub('\n', ' ').squeeze(" ")
         end
@@ -256,7 +254,6 @@ module SecQuery
         if entity.business_address
           puts "\tBusiness Address:\t"+ entity.business_address.inspect.gsub('\n', ' ').squeeze(" ")
         end
-
 
         if !entity.relationships
           puts "\n\tRELATIONSHIPS:\t0 Total"
@@ -267,6 +264,7 @@ module SecQuery
             printf("\t%-40s %-15s %-30s %-10s\n",relationship.name, relationship.cik, relationship.position, relationship.date)
           end
         end
+
         if entity.transactions
           puts "\n\tTRANSACTIONS:\t"+ entity.transactions.count.to_s+" Total"
           printf("\t%-20s %-10s %-5s %-10s %-10s %-10s %-15s %-10s\n\n","Owner", "CIK", "Modes", "Type","Shares","Price","Owned","Date")
@@ -274,19 +272,18 @@ module SecQuery
             printf("\t%-20s %-10s %-5s %-10s%-10s %-10s %-15s %-10s\n", transaction.reporting_owner,transaction.owner_cik,transaction.modes, transaction.type,transaction.shares,transaction.price,transaction.owned,transaction.date)
           end
         end
+
         if entity.filings
           puts "\n\tFILINGS:\t"+ entity.filings.count.to_s+" Total"
           printf("\t%-10s %-30s %-20s\n\n","Type", "File ID", "Date")
           for filing in entity.filings
             printf("\t%-10s %-30s %-20s\n",filing.term, filing.file_id, filing.date)
           end
-
         end
         puts "\t"+entity.url+"\n\n"
       else
         return "No Entity found."
       end
-
     end
   end
 end
