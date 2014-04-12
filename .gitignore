@@ -1,0 +1,17 @@
+.DS_Store
+*.gem
+*.rbc
+.bundle
+.config
+.yardoc
+Gemfile.lock
+InstalledFiles
+_yardoc
+coverage
+doc/
+lib/bundler/man
+pkg
+pkg/*
+rdoc
+spec/support/vcr_cassettes
+spec/support/vcr_cassettes/*
