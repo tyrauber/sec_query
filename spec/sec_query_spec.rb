@@ -1,9 +1,11 @@
+# encoding: UTF-8
+
 include SecQuery
 require 'spec_helper'
 
 describe SecQuery::Entity do
 
-  describe 'Company Queries', vcr: { cassette_name: "aapl"} do
+  describe 'Company Queries', vcr: { cassette_name: 'aapl' } do
 
     let(:apple) do
       { name: 'APPLE INC', sic: '3571', symbol: 'aapl', cik: '0000320193' }
@@ -46,7 +48,7 @@ describe SecQuery::Entity do
     end
   end
 
-  describe 'People Queries', vcr: { cassette_name: "Steve Jobs"} do
+  describe 'People Queries', vcr: { cassette_name: 'Steve Jobs' } do
     let(:jobs) do
       { first: 'Steve', middle: 'P', last: 'Jobs', cik: '0001007844' }
     end
@@ -62,7 +64,7 @@ describe SecQuery::Entity do
     end
   end
 
-  describe 'Relationships, Transactions and Filings', vcr: { cassette_name: "Steve Jobs"} do
+  describe 'Relationships, Transactions and Filings', vcr: { cassette_name: 'Steve Jobs' } do
     ## Using Steve, because data should not change in the future. RIP.
 
     let(:jobs) do
@@ -73,7 +75,7 @@ describe SecQuery::Entity do
           { cik: '0001002114', name: 'PIXAR \\CA\\' }
         ],
         transactions: [
-          { filing_number: '0001181431-07-052839', reporting_owner: 'APPLE INC', shares:120000.0 },
+          { filing_number: '0001181431-07-052839', reporting_owner: 'APPLE INC', shares: 120000.0 },
           { filing_number: '0001181431-07-052839', reporting_owner: 'APPLE INC', shares: 40000.0 },
           { filing_number: '0001181431-07-052839', reporting_owner: 'APPLE INC', shares: 40000.0 },
           { filing_number: '0001181431-07-052839', reporting_owner: 'APPLE INC', shares: 40000.0 },

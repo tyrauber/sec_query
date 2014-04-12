@@ -1,4 +1,9 @@
+# encoding: UTF-8
+
 module SecQuery
+  # => SecQuery::Entity
+  # SecQuery::Entity is the root class which is responsible for requesting,
+  # parsing and initializing SecQuery::Entity intances from SEC Edgar.
   class Entity
     COLUMNS = [:first, :middle, :last, :name, :symbol, :cik, :url, :type, :sic,
                :location, :state_of_inc, :formerly, :mailing_address,

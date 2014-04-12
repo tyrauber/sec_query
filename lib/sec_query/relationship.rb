@@ -1,6 +1,10 @@
+# encoding: UTF-8
+
 module SecQuery
+  # => SecQuery::Relationship
+  # Relationships are Owner / Issuer Relationships between Entities,
+  # forged by Transactions.
   class Relationship
-    ## Relationships are Owner / Issuer Relationships between Entities, forged by Transactions.
     attr_accessor :name, :position, :date, :cik
 
     def initialize(relationship)

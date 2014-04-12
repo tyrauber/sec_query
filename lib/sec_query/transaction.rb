@@ -1,4 +1,8 @@
+# encoding: UTF-8
+
 module SecQuery
+  # => SecQuery::Transactions
+  # SecQuery filings for any given SecQuery::Entity instance.
   class Transaction
     attr_accessor :filing_number, :code, :date, :reporting_owner, :form, :type,
                   :modes, :shares, :price, :owned, :number, :owner_cik,

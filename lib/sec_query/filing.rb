@@ -1,4 +1,8 @@
+# encoding: UTF-8
+
 module SecQuery
+  # => SecQuery::Filing
+  # SecQuery::Filing requests and parses filings for any given SecQuery::Entity
   class Filing
     attr_accessor :cik, :title, :summary, :link, :term, :date, :file_id
 
