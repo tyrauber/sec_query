@@ -32,7 +32,7 @@ If running 'sec_query' from the command prompt in irb:
 
 Or:
 
-`SecQuery::Entity.find({:symbol=> "aapl"})`
+`SecQuery::Entity.find(:symbol=> "aapl")`
 
 #### By Name:
 
@@ -40,21 +40,21 @@ Or:
 
 Or:
 
-`SecQuery::Entity.find({:name=> "Apple, Inc."})`
+`SecQuery::Entity.find(:name=> "Apple, Inc.")`
 
 #### By Central Index Key, CIK:
 
-`SecQuery::Entity.find( "0000320193")`
+`SecQuery::Entity.find("0000320193")`
 
-Or: 
+Or:
 
-`SecQuery::Entity.find({:cik=> "0000320193"})`
+`SecQuery::Entity.find(:cik => "0000320193")`
 
 #### FIND PERSON:
 
 By First, Middle and Last Name.
 
-`SecQuery::Entity.find({:first=> "Steve", :middle=> "P", :last=> "Jobs"})`
+`SecQuery::Entity.find(:first => "Steve", :middle => "P", :last => "Jobs")`
 
 Middle initial or name is optional, but helps when there are multiple results for First and Last Name.
 
@@ -66,17 +66,17 @@ To return everything - All Relationships, Transactions and Filings - that the SE
 
 `SecQuery::Entity.find("AAPL",  true, true, true)`
 
-`SecQuery::Entity.find("AAPL", {:relationships=> true, :transactions=> true, :filings=>true})`
+`SecQuery::Entity.find("AAPL", {:relationships => true, :transactions => true, :filings => true})`
 
-`SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> true, :filings=>true)`
+`SecQuery::Entity.find("AAPL", :relationships => true, :transactions => true, :filings => true)`
 
-`SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> {:start=> 0, :count=> 80}, :filings=>{:start=> 0, :count=> 80})`
+`SecQuery::Entity.find("AAPL", :relationships => true, :transactions => {:start => 0, :count => 80}, :filings => {:start => 0, :count => 80})`
 
 You may also limit either the transactions or filings by adding the :limit to the transaction or filing arguements.
 
 For example,
 
-`SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> {:start=> 0, :count=>20, :limit=> 20}, :filings=>{:start=> 0, :count=> 20, :limit=> 20})`
+`SecQuery::Entity.find("AAPL", :relationships => true, :transactions => {:start => 0, :count => 20, :limit => 20}, :filings => {:start => 0, :count => 20, :limit => 20})`
 
 The above query will only return the last 20 transactions and filings.  This is helpful when querying companies that may have thousands or tens of thousands of transactions or filings.
 

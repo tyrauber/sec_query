@@ -84,7 +84,7 @@ module SecQuery
         tbl = doc.search("//span[@class='companyMatch']")
         if tbl && tbl.innerHTML != ''
           tbl = tbl[0].parent.search('table')[0].search('tr')
-          for tr in tbl
+          tbl.each do |tr|
             td = tr.search('td')
             if td[1] && entity[:middle] && td[1].innerHTML.downcase == ("#{entity[:last]} #{entity[:first]} #{entity[:middle]}").downcase || td[1] && td[1].innerHTML.downcase == ("#{ entity[:last] } #{ entity[:first] }").downcase
               cik = td[0].search('a').innerHTML
