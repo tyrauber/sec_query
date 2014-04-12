@@ -7,6 +7,9 @@ require 'hpricot'
 require 'open-uri'
 require 'rest-client'
 require 'rss'
+require 'nokogiri'
+require 'hashie'
+require 'crack'
 require 'rubygems'
 
 # internal

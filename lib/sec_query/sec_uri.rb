@@ -23,7 +23,6 @@ module SecQuery
 
     def self.handle_string_args(string_arg)
       options = {}
-      # Uhhhg. I hate using Float here. HACK
       begin Float(string_arg)
         options[:CIK] = string_arg
       rescue

@@ -1,15 +1,13 @@
 # encoding: UTF-8
 
 module SecQuery
-  # => SecQuery::Filing
-  # SecQuery::Filing requests and parses filings for any given SecQuery::Entity
   class Filing
-    COLUMNS = :cik, :title, :summary, :link, :term, :date, :file_id
-    attr_accessor(*COLUMNS)
+    attr_accessor :cik, :accession_nunber, :act, :file_number, :file_number_href, :filing_date, :filing_href, :filing_type, :film_number, :form_name, :size, :type
 
-    def initialize(filing)
-      COLUMNS.each do |column|
-        instance_variable_set("@#{ column }", filing[column])
+    def initialize(cik, filing)
+      @cik = cik
+      filing.each do |key, value|
+        instance_variable_set "@#{key}", value.to_s
       end
     end
 
@@ -80,31 +78,19 @@ module SecQuery
       end
     end
 
-    def self.find(entity, start, count, limit)
-      start ||= 0
-      count ||= 80
-      url = uri_for_cik(entity[:cik], start, count)
-      response = Entity.query(url)
-      doc = Hpricot::XML(response)
-      entries = doc.search(:entry)
-      query_more = false
-      entries.each do |entry|
-        query_more = true
-        filing = {}
-        filing[:cik] = entity[:cik]
-        filing[:title] = (entry/:title).innerHTML
-        filing[:summary] = (entry/:summary).innerHTML
-        filing[:link] =  (entry/:link)[0].get_attribute('href')
-        filing[:term] = (entry/:category)[0].get_attribute('term')
-        filing[:date] = (entry/:updated).innerHTML
-        filing[:file_id] = (entry/:id).innerHTML.split('=').last
-        entity[:filings] << Filing.new(filing)
+    def self.find(cik, start=0, count=80)
+      url = "http://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=#{cik}&count=#{count}&start=#{start}"
+      response = Entity.query(url+"&output=atom")
+      document = Nokogiri::HTML(response)
+      filings = []
+      if document.xpath('//content').to_s.length > 0
+        document.xpath('//content').each do |e|
+          if e.xpath('//content/accession-nunber').to_s.length > 0
+            filings << Filing.new(cik, Crack::XML.parse(e.to_s)['content'])
+          end
+        end
       end
-      if (query_more && limit.nil?) || (query_more && !limit)
-        Filing.find(entity, start + count, count, limit)
-      else
-        return entity
-      end
+      return filings
     end
   end
 end
