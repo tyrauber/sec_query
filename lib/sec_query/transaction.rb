@@ -32,7 +32,7 @@ module SecQuery
       end
     end
 
-    def setup_transaction_date(transaction)
+    def setup_date(transaction)
       if transaction[:date] && transaction[:date] != '-'
         date = transaction[:date].split('-')
         @date = Time.utc(date[0], date[1], date[2])
