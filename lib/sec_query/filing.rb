@@ -4,16 +4,13 @@ module SecQuery
   # => SecQuery::Filing
   # SecQuery::Filing requests and parses filings for any given SecQuery::Entity
   class Filing
-    attr_accessor :cik, :title, :summary, :link, :term, :date, :file_id
+    COLUMNS = :cik, :title, :summary, :link, :term, :date, :file_id
+    attr_accessor(*COLUMNS)
 
     def initialize(filing)
-      @cik = filing[:cik]
-      @title = filing[:title]
-      @summary = filing[:summary]
-      @link = filing[:link]
-      @term = filing[:term]
-      @date = filing[:date]
-      @file_id = filing[:file_id]
+      COLUMNS.each do |column|
+        instance_variable_set("@#{ column }", filing[column])
+      end
     end
 
     def self.find(entity, start, count, limit)

@@ -9,7 +9,7 @@ module SecQuery
                :location, :state_of_inc, :formerly, :mailing_address,
                :business_address, :relationships, :transactions, :filings]
 
-    attr_accessor *COLUMNS
+    attr_accessor(*COLUMNS)
 
     def initialize(entity)
       COLUMNS.each do |column|
