@@ -4,41 +4,46 @@ module SecQuery
   # => SecQuery::Transactions
   # SecQuery filings for any given SecQuery::Entity instance.
   class Transaction
-    attr_accessor :filing_number, :code, :date, :reporting_owner, :form, :type,
-                  :modes, :shares, :price, :owned, :number, :owner_cik,
-                  :security_name, :deemed, :exercise, :nature, :derivative,
-                  :underlying_1, :exercised,	:underlying_2, :expires,
-                  :underlying_3
+    STR_COLUMNS = :code, :form, :type, :modes, :owner_cik, :security_name,
+                  :deemed, :exercise, :nature, :derivative, :exercised,
+                  :reporting_owner
+
+    FLOAT_COLUMNS = :shares, :owned, :underlying_1, :underlying_2,
+                    :underlying_3
+
+    attr_accessor(*STR_COLUMNS, *FLOAT_COLUMNS, :filing_number, :date, :price,
+                  :owned, :number, :expires)
 
     def initialize(transaction)
+      @number = transaction[:number].to_i
+      @price = transaction[:price].gsub('$', '').to_f
       @filing_number = transaction[:form].split('/')[-2][0..19]
-      @code = transaction[:code]
+      setup_columns(transaction)
+      setup_date(transaction)
+      setup_expires(transaction)
+    end
+
+    def setup_columns(transaction)
+      STR_COLUMNS.each do |column|
+        instance_variable_set("@#{ column }", transaction[column])
+      end
+      FLOAT_COLUMNS.each do |column|
+        instance_variable_set("@#{ column }", transaction[column].to_f)
+      end
+    end
+
+    def setup_date(transaction)
       if transaction[:date] && transaction[:date] != '-'
         date = transaction[:date].split('-')
         @date = Time.utc(date[0], date[1], date[2])
       end
-      @reporting_owner = transaction[:reporting_owner]
-      @form = transaction[:form]
-      @type = transaction[:type]
-      @modes = transaction[:modes]
-      @shares = transaction[:shares].to_f
-      @price = transaction[:price].gsub('$', '').to_f
-      @owned = transaction[:owned].to_f
-      @number = transaction[:number].to_i
-      @owner_cik = transaction[:owner_cik]
-      @security_name = transaction[:security_name]
-      @deemed = transaction[:deemed]
-      @exercise = transaction[:exercise]
-      @nature = transaction[:nature]
-      @derivative = transaction[:derivative]
-      @underlying_1 = transaction[:underlying_1].to_f
-      @exercised = transaction[:exercised]
-      @underlying_2 = transaction[:underlying_2].to_f
+    end
+
+    def setup_expires(transaction)
       if transaction[:expires]
         expires = transaction[:expires].split('-')
         @expires = Time.utc(expires[0], expires[1], expires[2].to_i)
       end
-      @underlying_3 = transaction[:underlying_3].to_f
     end
 
     def self.find(entity, start, count, limit)
@@ -85,6 +90,7 @@ module SecQuery
         end
         i += 1
       end
+
       if (query_more && limit.nil?) || (query_more && !limit)
         Transaction.find(entity, start + count, count, limit)
       else

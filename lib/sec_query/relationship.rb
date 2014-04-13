@@ -5,12 +5,13 @@ module SecQuery
   # Relationships are Owner / Issuer Relationships between Entities,
   # forged by Transactions.
   class Relationship
-    attr_accessor :name, :position, :date, :cik
+    COLUMNS = :name, :position, :cik
+    attr_accessor(*COLUMNS, :date)
 
     def initialize(relationship)
-      @cik = relationship[:cik]
-      @name = relationship[:name]
-      @position = relationship[:position]
+      COLUMNS.each do |column|
+        instance_variable_set("@#{ column }", relationship[column])
+      end
       date = relationship[:date].split('-')
       @date = Time.utc(date[0], date[1], date[2].to_i)
     end
