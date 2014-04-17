@@ -14,9 +14,8 @@ Gem::Specification.new do |s|
   s.description = 'Search for company or person, by name, symbol or Central Index Key (CIK), and retrieve relationships, transactions and filings.'
 
   s.rubyforge_project = 'sec_query'
-
-  s.files         = `git ls-files`.split('\n')
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
+  s.files         = `git ls-files`.split("\n")
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ['lib']
 
