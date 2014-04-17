@@ -43,7 +43,7 @@ module SecQuery
 
     def self.handle_hash_args(hash_arg)
       options = hash_arg
-      if (hash_arg[:symbol] || hash_arg[:cik])
+      if hash_arg[:symbol] || hash_arg[:cik]
         options[:CIK] = (hash_arg[:symbol] || hash_arg[:cik])
         return options
       end
@@ -87,12 +87,12 @@ module SecQuery
     private
 
     def uri
-      Addressable::URI.new({
+      Addressable::URI.new(
         host: host,
         scheme: scheme,
         path: path,
         query_values: query_values
-      })
+      )
     end
   end
 end
