@@ -1,27 +1,27 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
+$:.push File.expand_path('../lib', __FILE__)
 
-require "sec_query/version"
-require "sec_query"
+require 'sec_query/version'
+require 'sec_query'
 
 Gem::Specification.new do |s|
-  s.name        = "sec_query"
+  s.name        = 'sec_query'
   s.version     = SecQuery::VERSION
-  s.authors     = ["Ty Rauber"]
-  s.email       = ["tyrauber@mac.com"]
-  s.homepage    = "https://github.com/tyrauber/sec_query"
-  s.summary     = "A ruby gem for querying the United States Securities and Exchange Commission Edgar System."
-  s.description = "Search for company or person, by name, symbol or Central Index Key (CIK), and retrieve relationships, transactions and filings."
+  s.authors     = ['Ty Rauber']
+  s.email       = ['tyrauber@mac.com']
+  s.homepage    = 'https://github.com/tyrauber/sec_query'
+  s.summary     = 'A ruby gem for querying the United States Securities and Exchange Commission Edgar System.'
+  s.description = 'Search for company or person, by name, symbol or Central Index Key (CIK), and retrieve relationships, transactions and filings.'
 
-  s.rubyforge_project = "sec_query"
+  s.rubyforge_project = 'sec_query'
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
+  s.files         = `git ls-files`.split('\n')
+  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  s.require_paths = ['lib']
 
   # specify any dependencies here; for example:
-  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rspec', '>= 2.14'
   s.add_development_dependency 'vcr'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'rubocop'

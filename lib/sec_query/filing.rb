@@ -16,7 +16,13 @@ module SecQuery
     def self.find(entity, start, count, limit)
       start ||= 0
       count ||= 80
-      url = "http://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=#{entity[:cik]}&output=atom&count=#{count}&start=#{start}"
+      url = SecURI.browse_edgar_uri({
+        action: :getcompany,
+        CIK: entity[:cik],
+        output: :atom,
+        count: count,
+        start: start
+      })
       response = Entity.query(url)
       doc = Hpricot::XML(response)
       entries = doc.search(:entry)
