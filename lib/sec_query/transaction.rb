@@ -49,7 +49,12 @@ module SecQuery
     def self.find(entity, start, count, limit)
       start ||= 0
       count ||= 80
-      url = "http://www.sec.gov/cgi-bin/own-disp?action=get#{entity[:type]}&CIK=#{entity[:cik]}&start=#{start}&count=#{count}"
+      url = SecURI.ownership_display_uri({
+        action: "get#{entity[:type]}",
+        CIK: entity[:cik],
+        start: start,
+        count: count
+      })
       response = Entity.query(url)
       doc = Hpricot(response)
       trans = doc.search("//td[@width='40%']")[0].parent.parent.search('//tr')

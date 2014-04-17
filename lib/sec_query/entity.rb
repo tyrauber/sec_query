@@ -19,7 +19,8 @@ module SecQuery
 
     def self.find(entity_args, *options)
       temp = {}
-      temp[:url] = Entity.url(entity_args)
+      temp[:url] = SecURI.browse_edgar_uri(entity_args)
+      temp[:url][:action] = :getcompany
       temp[:cik] = Entity.cik(temp[:url], entity_args)
 
       if !temp[:cik] || temp[:cik] == ''
@@ -45,7 +46,7 @@ module SecQuery
     end
 
     def self.query(url)
-      RestClient.get(url) do |response, request, result, &block|
+      RestClient.get(url.to_s) do |response, request, result, &block|
         case response.code
         when 200
           return response
@@ -55,34 +56,8 @@ module SecQuery
       end
     end
 
-    def self.url(args)
-      if args.is_a?(Hash)
-        if args[:symbol]
-          string = "CIK=#{ args[:symbol] }"
-        elsif args[:cik]
-          string = "CIK=#{ args[:cik] }"
-        elsif args[:first] && args[:last]
-          string = "company=#{ args[:last] } #{ args[:first] }"
-        elsif args[:name]
-          string = "company=#{ args[:name].gsub(/[(,?!\''"":.)]/, '') }"
-        end
-      elsif args.is_a?(String)
-        begin Float(args)
-          string = "CIK=#{ args }"
-        rescue
-          if args.length <= 4
-            string = "CIK=#{ args }"
-          else
-            string = "company=#{ args.gsub(/[(,?!\''"":.)]/, '') }"
-          end
-        end
-      end
-      string = string.to_s.gsub(' ', '+')
-      "http://www.sec.gov/cgi-bin/browse-edgar?#{ string }&action=getcompany"
-    end
-
     def self.cik(url, entity)
-      response = Entity.query("#{ url }&output=atom")
+      response = Entity.query(url.output_atom.to_s)
       doc = Hpricot::XML(response)
       data = doc.search('//feed/title')[0]
       if data.inner_text == 'EDGAR Search Results'
@@ -107,14 +82,14 @@ module SecQuery
     end
 
     def self.document(cik)
-      url = "http://www.sec.gov/cgi-bin/own-disp?action=getissuer&CIK=#{cik}"
+      url = SecURI.ownership_display_uri(action: :getissuer, CIK: cik)
       response = query(url)
       doc = Hpricot(response)
       text = 'Ownership Reports from:'
       type = 'issuer'
       entity = doc.search('//table').search('//td').search("b[text()*='#{text}']")
       if entity.empty?
-        url = "http://www.sec.gov/cgi-bin/own-disp?action=getowner&CIK=#{cik}"
+        url = SecURI.ownership_display_uri(action: :getowner, CIK: cik)
         response = query(url)
         doc = Hpricot(response)
         text = 'Ownership Reports for entitys:'
