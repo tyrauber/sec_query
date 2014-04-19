@@ -80,15 +80,6 @@ For example,
 
 The above query will only return the last 20 transactions and filings.  This is helpful when querying companies that may have thousands or tens of thousands of transactions or filings.
 
-### Entity.log(entity)
-
-For doing terminal queries, there is a log function that formats and prints the entity data to your terminal window.
-
-`entity = SecQuery::Entity.find("AAPL",  true)`
-
-`SecQuery::Entity.log(entity)`
-
-
 ## Classes
 
 This gem contains four classes - Entity, Relationship, Transaction and Filing.  Each Class contains the listed fields. (Everything I could parse out of the query results.)
