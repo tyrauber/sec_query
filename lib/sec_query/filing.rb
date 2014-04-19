@@ -13,16 +13,76 @@ module SecQuery
       end
     end
 
+    def self.fetch(uri, &blk)
+      open(uri) do |rss|
+        parse_rss(rss, &blk)
+      end
+    end
+
+    def self.recent(options = {}, &blk)
+      start = options.fetch(:start, 0)
+      count = options.fetch(:count, 100)
+      fetch(uri_for_recent(start, count), &blk)
+      start += count
+      recent({ start: start, count: count }, &blk)
+    rescue OpenURI::HTTPError
+      return
+    end
+
+    def self.for_cik(cik, options = {}, &blk)
+      start = options.fetch(:start, 0)
+      count = options.fetch(:count, 100)
+      fetch(uri_for_cik(cik, start, count), &blk)
+      start += count
+      for_cik(cik, { start: start, count: count }, &blk)
+    rescue OpenURI::HTTPError
+      return
+    end
+
+    def self.uri_for_recent(start = 0, count = 100)
+      SecURI.browse_edgar_uri(
+        action: :getcurrent,
+        owner: :include,
+        output: :atom,
+        start: start,
+        count: count
+      )
+    end
+
+    def self.uri_for_cik(cik, start = 0, count = 100)
+      SecURI.browse_edgar_uri(
+        action: :getcompany,
+        owner: :include,
+        output: :atom,
+        start: start,
+        count: count,
+        CIK: cik
+      )
+    end
+
+    def self.parse_rss(rss, &blk)
+      feed = RSS::Parser.parse(rss, false)
+      feed.entries.each do |entry|
+        title = entry.title.content
+        term = entry.category.term
+#       cik = title[title.index("(")+1...title.index(")")]
+#       file_id =
+        link = entry.link.href.gsub('-index.htm', '.txt')
+        date = DateTime.parse(entry.updated.content.to_s)
+        filing = Filing.new({
+          term: term,
+          title: title,
+          date: date,
+          link: link
+        })
+        blk.call(filing)
+      end
+    end
+
     def self.find(entity, start, count, limit)
       start ||= 0
       count ||= 80
-      url = SecURI.browse_edgar_uri({
-        action: :getcompany,
-        CIK: entity[:cik],
-        output: :atom,
-        count: count,
-        start: start
-      })
+      url = uri_for_cik(entity[:cik], start, count)
       response = Entity.query(url)
       doc = Hpricot::XML(response)
       entries = doc.search(:entry)
@@ -37,7 +97,6 @@ module SecQuery
         filing[:term] = (entry/:category)[0].get_attribute('term')
         filing[:date] = (entry/:updated).innerHTML
         filing[:file_id] = (entry/:id).innerHTML.split('=').last
-
         entity[:filings] << Filing.new(filing)
       end
       if (query_more && limit.nil?) || (query_more && !limit)

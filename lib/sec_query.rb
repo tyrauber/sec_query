@@ -4,7 +4,9 @@
 require 'active_support/all'
 require 'addressable/uri'
 require 'hpricot'
+require 'open-uri'
 require 'rest-client'
+require 'rss'
 require 'rubygems'
 
 # internal
