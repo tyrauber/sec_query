@@ -22,9 +22,11 @@ module SecQuery
     def self.recent(options = {}, &blk)
       start = options.fetch(:start, 0)
       count = options.fetch(:count, 100)
+      limit = options.fetch(:limit, 100)
       fetch(uri_for_recent(start, count), &blk)
       start += count
-      recent({ start: start, count: count }, &blk)
+      return if start >= limit
+      recent({ start: start, count: count, limit: limit }, &blk)
     rescue OpenURI::HTTPError
       return
     end
@@ -32,9 +34,11 @@ module SecQuery
     def self.for_cik(cik, options = {}, &blk)
       start = options.fetch(:start, 0)
       count = options.fetch(:count, 100)
+      limit = options.fetch(:limit, 100)
       fetch(uri_for_cik(cik, start, count), &blk)
       start += count
-      for_cik(cik, { start: start, count: count }, &blk)
+      return if start >= limit
+      for_cik(cik, { start: start, count: count, limit: limit }, &blk)
     rescue OpenURI::HTTPError
       return
     end
@@ -63,17 +67,14 @@ module SecQuery
     def self.parse_rss(rss, &blk)
       feed = RSS::Parser.parse(rss, false)
       feed.entries.each do |entry|
-        title = entry.title.content
-        term = entry.category.term
-#       cik = title[title.index("(")+1...title.index(")")]
-#       file_id =
-        link = entry.link.href.gsub('-index.htm', '.txt')
-        date = DateTime.parse(entry.updated.content.to_s)
         filing = Filing.new({
-          term: term,
-          title: title,
-          date: date,
-          link: link
+          cik: entry.title.content.match(/\((\w{10})\)/)[1],
+          file_id: entry.id.content.split('=').last,
+          term:  entry.category.term,
+          title: entry.title.content,
+          summary: entry.summary.content,
+          date: DateTime.parse(entry.updated.content.to_s),
+          link: entry.link.href.gsub('-index.htm', '.txt')
         })
         blk.call(filing)
       end
