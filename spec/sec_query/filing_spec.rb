@@ -13,12 +13,11 @@ describe SecQuery::Filing do
     expect(SecQuery::Filing.uri_for_cik('testing').to_s)
       .to eq('http://www.sec.gov/cgi-bin/browse-edgar?CIK=testing&action=getcompany&company&count=100&output=atom&owner=include&start=0')
   end
-  
+
   describe '::recent', vcr: { cassette_name: 'recent' } do
-    
     let(:filings) { [] }
     before(:each) do
-      SecQuery::Filing.recent({start: 0, count: 10, limit: 10}) do |filing| 
+      SecQuery::Filing.recent({start: 0, count: 10, limit: 10}) do |filing|
         filings.push filing
       end
     end
@@ -28,7 +27,7 @@ describe SecQuery::Filing do
     end
 
     it 'should have filing attributes', vcr: { cassette_name: 'recent' } do
-      filings.each do |filing|        
+      filings.each do |filing|
         expect(filing.cik).to be_present
         expect(filing.title).to be_present
         expect(filing.summary).to be_present
