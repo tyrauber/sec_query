@@ -23,7 +23,8 @@ module SecQuery
       start = options.fetch(:start, 0)
       count = options.fetch(:count, 100)
       limit = options.fetch(:limit, 100)
-      fetch(uri_for_recent(start, count), &blk)
+      limited_count = [limit - start, count].min
+      fetch(uri_for_recent(start, limited_count), &blk)
       start += count
       return if start >= limit
       recent({ start: start, count: count, limit: limit }, &blk)
