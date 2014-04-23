@@ -4,14 +4,13 @@ module SecQuery
   # => SecQuery::Filing
   # SecQuery::Filing requests and parses filings for any given SecQuery::Entity
   class Filing
-    attr_accessor :cik, :accession_nunber, :act, :file_number,
-                  :file_number_href, :filing_date, :filing_href,
-                  :filing_type, :film_number, :form_name, :size, :type
+    COLUMNS = [:cik, :title, :summary, :link, :term, :date, :file_id]
 
-    def initialize(cik, filing)
-      @cik = cik
-      filing.each do |key, value|
-        instance_variable_set "@#{key}", value.to_s
+    attr_accessor(*COLUMNS)
+
+    def initialize(filing)
+      COLUMNS.each do |column|
+        instance_variable_set("@#{ column }", filing[column])
       end
     end
 
@@ -83,9 +82,12 @@ module SecQuery
     end
 
     def self.find(cik, start = 0, count = 80)
-      browse_edgar = 'http://www.sec.gov/cgi-bin/browse-edgar?'
-      params = "action=getcompany&CIK=#{cik}&count=#{count}&start=#{start}"
-      response = Entity.query("#{browse_edgar}#{params}&output=atom")
+      temp = {}
+      temp[:url] = SecURI.browse_edgar_uri({cik: cik})
+      temp[:url][:action] = :getcompany
+      temp[:url][:start] = start
+      temp[:url][:count] = count
+      response = Entity.query(temp[:url].output_atom.to_s)
       document = Nokogiri::HTML(response)
       parse(cik, document)
     end
@@ -95,7 +97,14 @@ module SecQuery
       if document.xpath('//content').to_s.length > 0
         document.xpath('//content').each do |e|
           if e.xpath('//content/accession-nunber').to_s.length > 0
-            filings << Filing.new(cik, Crack::XML.parse(e.to_s)['content'])
+            content = Crack::XML.parse(e.to_s)['content']
+            content[:cik] = cik
+            content[:file_id] = content.delete('accession_nunber')
+            content[:date] = content.delete('filing_date')
+            content[:link] = content.delete('filing_href')
+            content[:term] = content.delete('filing_type')
+            content[:title] = content.delete('form_name')
+            filings << Filing.new(content)
           end
         end
       end

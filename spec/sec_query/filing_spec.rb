@@ -17,7 +17,7 @@ describe SecQuery::Filing do
     
     let(:filings) { [] }
     before(:each) do
-      SecQuery::Filing.recent({start: 0, count: 10, limit: 10}) do |filing| 
+      SecQuery::Filing.recent({start: 0, count: 10, limit: 10}) do |filing|
         filings.push filing
       end
     end
@@ -79,11 +79,6 @@ describe SecQuery::Filing do
     
       it "should be valid filing" do
         is_valid_filing?(entity.filings.first)
-      end
-    
-      it "should respond to content" do
-        entity.filings.first.should respond_to(:content)
-        puts entity.filings.first.content
       end
     end
   end

@@ -5,15 +5,19 @@ module SecQuery
   # SecQuery::Entity is the root class which is responsible for requesting,
   # parsing and initializing SecQuery::Entity intances from SEC Edgar.
   class Entity
-    attr_accessor :cik, :name, :mailing_address, :business_address,
-                  :company_info
+    COLUMNS = [:cik, :name, :mailing_address, :business_address, :company_info,
+      :assigned_sic, :assigned_sic_desc, :assigned_sic_href, :assitant_director, :cik, :cik_href,
+      :formerly_name, :state_location, :state_location_href, :state_of_incorporation]
+    attr_accessor(*COLUMNS)
 
-    def initialize(company_info)
-      @company_info = Hashie::Mash.new(company_info)
-      @cik = @company_info.cik
-      @name = @company_info.conformed_name
-      @company_info.addresses.address.each do |address|
-        instance_variable_set "@#{address.type}_address", address
+    def initialize(entity)
+      entity = Hashie::Mash.new(entity)
+      entity[:name] = entity.delete(:conformed_name)
+      entity.addresses.address.each do |address|
+        entity["#{address.type}_address".to_sym] = address
+      end
+      COLUMNS.each do |column|
+        instance_variable_set("@#{ column }", entity[column])
       end
     end
 
@@ -36,27 +40,11 @@ module SecQuery
       end
     end
 
-    def self.format_args(args)
-      if args[:symbol]
-        string = "CIK=#{args[:symbol]}"
-      elsif args[:cik]
-        string = "CIK=#{args[:cik]}"
-      elsif args[:first] && args[:last]
-        string = "company=#{args[:last]} #{args[:first]}"
-      elsif args[:name]
-        string = "company=#{args[:name].gsub(/[(,?!\''"":.)]/, '')}"
-      end
-      string.to_s.gsub(' ', '+')
-    end
-
-    def self.url(params)
-      browse_edgar = 'http://www.sec.gov/cgi-bin/browse-edgar?'
-      "#{browse_edgar}#{params}&action=getcompany"
-    end
-
-    def self.find(args)
-      url = url(format_args(validate_args(args)))
-      response = query("#{url}&output=atom")
+    def self.find(entity_args)
+      temp = {}
+      temp[:url] = SecURI.browse_edgar_uri(entity_args)
+      temp[:url][:action] = :getcompany
+      response = query(temp[:url].output_atom.to_s)
       document = Nokogiri::HTML(response)
       company_info = parse(document)
       if company_info

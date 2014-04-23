@@ -20,15 +20,15 @@ describe SecQuery::Filing do
 
       let(:entity) {SecQuery::Entity.find(query[:cik])}
       
-      it "should respond to transactions" do
-        entity.should respond_to(:transactions)
-        entity.filings.should be_kind_of(Array)
-      end
+      # it "should respond to transactions" do
+      #   entity.should respond_to(:transactions)
+      #   entity.filings.should be_kind_of(Array)
+      # end
           
-      it "should be valid transaction" do
-        entity.transactions.first.inspect
-        #is_valid_filing?(entity.filings.first)
-      end
+      # it "should be valid transaction" do
+      #   entity.transactions.first.inspect
+      #   #is_valid_filing?(entity.filings.first)
+      # end
       #     
       # it "should respond to content" do
       #   entity.filings.first.should respond_to(:content)

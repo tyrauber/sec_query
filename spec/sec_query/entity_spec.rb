@@ -26,10 +26,6 @@ describe SecQuery::Entity do
           it "should have a valid business address" do
             is_valid_address?(entity.business_address)
           end
-
-          it "should have valid company info" do
-            is_valid_company_info?(entity.company_info)
-          end
         end
 
         describe "as string" do
@@ -62,10 +58,6 @@ describe SecQuery::Entity do
 
           it "should have a valid business address" do
             is_valid_address?(entity.business_address)
-          end
-
-          it "should have valid company info" do
-            is_valid_company_info?(entity.company_info)
           end
         end
 
