@@ -1,5 +1,4 @@
 # encoding: UTF-8
-require 'debugger'
 
 module SecQuery
   class SecURI
@@ -21,8 +20,6 @@ module SecQuery
       instance.query_values = options
       instance
     end
-
-    private_class_method :build_with_path
 
     def self.handle_string_args(string_arg)
       options = {}
