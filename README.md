@@ -100,6 +100,21 @@ This gem contains four classes - Entity, Relationship, Transaction and Filing.  
 
 `:cik, :title, :summary, :link, :term, :date, :file_id`
 
+Filings can are fetched a few different ways. Here are some of the supported
+methods:
+
+```rb
+# prints the links for the most recent filings
+SecQuery::Filing.recent do |filing|
+  p filing.link
+end
+
+# prints all of the links for cik 0000704051 (LEGG MASON, INC.)
+SecQuery::Filing.for_cik('0000704051') do |filing|
+  p filing.link
+end
+```
+
 ## To Whom It May Concern at the SEC
 
 Over the last decade, I have gotten to know Edgar quite extensively and I have grown quite fond of it and the information it contains. So it is with my upmost respect that I make the following suggestions:
