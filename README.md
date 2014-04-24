@@ -80,15 +80,6 @@ For example,
 
 The above query will only return the last 20 transactions and filings.  This is helpful when querying companies that may have thousands or tens of thousands of transactions or filings.
 
-### Entity.log(entity)
-
-For doing terminal queries, there is a log function that formats and prints the entity data to your terminal window.
-
-`entity = SecQuery::Entity.find("AAPL",  true)`
-
-`SecQuery::Entity.log(entity)`
-
-
 ## Classes
 
 This gem contains four classes - Entity, Relationship, Transaction and Filing.  Each Class contains the listed fields. (Everything I could parse out of the query results.)
@@ -108,6 +99,21 @@ This gem contains four classes - Entity, Relationship, Transaction and Filing.  
 * Filing
 
 `:cik, :title, :summary, :link, :term, :date, :file_id`
+
+Filings can are fetched a few different ways. Here are some of the supported
+methods:
+
+```rb
+# prints the links for the most recent filings
+SecQuery::Filing.recent do |filing|
+  p filing.link
+end
+
+# prints all of the links for cik 0000704051 (LEGG MASON, INC.)
+SecQuery::Filing.for_cik('0000704051') do |filing|
+  p filing.link
+end
+```
 
 ## To Whom It May Concern at the SEC
 
