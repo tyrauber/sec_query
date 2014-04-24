@@ -97,7 +97,7 @@ module SecQuery
       if document.xpath('//content').to_s.length > 0
         document.xpath('//content').each do |e|
           if e.xpath('//content/accession-nunber').to_s.length > 0
-            content = Crack::XML.parse(e.to_s)['content']
+            content = Hash.from_xml(e.to_s)['content']
             content[:cik] = cik
             content[:file_id] = content.delete('accession_nunber')
             content[:date] = content.delete('filing_date')

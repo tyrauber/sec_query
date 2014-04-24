@@ -1,23 +1,17 @@
 # encoding: UTF-8
-
 module SecQuery
   # => SecQuery::Entity
   # SecQuery::Entity is the root class which is responsible for requesting,
   # parsing and initializing SecQuery::Entity intances from SEC Edgar.
   class Entity
-    COLUMNS = [:cik, :name, :mailing_address, :business_address, :company_info,
-      :assigned_sic, :assigned_sic_desc, :assigned_sic_href, :assitant_director, :cik, :cik_href,
-      :formerly_name, :state_location, :state_location_href, :state_of_incorporation]
+    COLUMNS = [:cik, :name, :mailing_address, :business_address,
+      :assigned_sic, :assigned_sic_desc, :assigned_sic_href, :assitant_director, :cik_href,
+      :formerly_names, :state_location, :state_location_href, :state_of_incorporation]
     attr_accessor(*COLUMNS)
 
     def initialize(entity)
-      entity = Hashie::Mash.new(entity)
-      entity[:name] = entity.delete(:conformed_name)
-      entity.addresses.address.each do |address|
-        entity["#{address.type}_address".to_sym] = address
-      end
       COLUMNS.each do |column|
-        instance_variable_set("@#{ column }", entity[column])
+        instance_variable_set("@#{ column }", entity[column.to_s])
       end
     end
 
@@ -46,25 +40,25 @@ module SecQuery
       temp[:url][:action] = :getcompany
       response = query(temp[:url].output_atom.to_s)
       document = Nokogiri::HTML(response)
-      company_info = parse(document)
-      if company_info
-        return Entity.new(company_info)
-      else
-        return nil
-      end
+      xml = document.xpath("//feed/company-info")
+      Entity.new(parse(xml))
     end
 
-    def self.parse(document)
-      if document.xpath('//feed/company-info').to_s.length > 0
-        data = document.xpath('//feed/company-info').to_s
-        company_info = Crack::XML.parse(data)['company_info']
-      elsif document.xpath('//feed/entry/content/company-info').to_s.length > 0
-        data = document.xpath('//content/company-info').to_s
-        company_info = Crack::XML.parse(data)['company_info']
+    def self.parse(xml)
+      content = Hash.from_xml(xml.to_s)
+      if content['company_info'].present?
+        content = content['company_info']
+        content['name'] = content.delete('conformed_name')
+        if content['formerly_names'].present?
+          content['formerly_names'] = content.delete('formerly_names')['names']
+        end
+        content['addresses']['address'].each do |address|
+          content["#{address['type']}_address"] = address
+        end
+        return content
       else
-        company_info = false
+        return {}
       end
-      company_info
     end
   end
 end
