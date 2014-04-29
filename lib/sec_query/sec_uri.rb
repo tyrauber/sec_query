@@ -6,7 +6,12 @@ class Date
   end
 
   def to_sec_uri_format
-    "#{ year }/QTR#{ quarter }/company.#{ strftime("%Y%m%d") }.idx"
+    today = Date.today
+    if today.quarter == quarter && today.year == year
+      "company.#{ strftime("%Y%m%d") }.idx"
+    else
+      "#{ year }/QTR#{ quarter }/company.#{ strftime("%Y%m%d") }.idx"
+    end
   end
 end
 
