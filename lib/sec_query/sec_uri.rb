@@ -1,11 +1,29 @@
 # encoding: UTF-8
 
+class Date
+  def quarter
+    ((month / 3.0) - 0.1).floor + 1
+  end
+
+  def to_sec_uri_format
+    "#{ year }/QTR#{ quarter }/company.#{ strftime("%Y%m%d") }.idx"
+  end
+end
+
 module SecQuery
   class SecURI
     attr_accessor :host, :scheme, :path, :query_values
 
     def self.browse_edgar_uri(args = nil)
       build_with_path('/browse-edgar', args)
+    end
+
+    def self.for_date(date)
+      instance = SecURI.new
+      instance.scheme = 'ftp'
+      instance.host = 'ftp.sec.gov'
+      instance.path = "edgar/daily-index/#{ date.to_sec_uri_format }"
+      instance
     end
 
     def self.ownership_display_uri(args = nil)
