@@ -44,6 +44,50 @@ module SecQuery
       return
     end
 
+    def self.for_date(date, &blk)
+      ftp = Net::FTP.new('ftp.sec.gov')
+      ftp.login
+      file_name = ftp.nlst("edgar/daily-index/#{ date.to_sec_uri_format }*")[0]
+      ftp.close
+      open("ftp://ftp.sec.gov/#{ file_name }") do |file|
+        if file_name[-2..-1] == 'gz'
+          gz_reader = Zlib::GzipReader.new(file)
+          gz_reader.rewind
+          filings_for_index(gz_reader).each(&blk)
+        else
+          filings_for_index(file).each(&blk)
+        end
+      end
+    end
+
+    def self.filings_for_index(index)
+      [].tap do |filings|
+        content_section = false
+        index.each_line do |row|
+          content_section = true if row.include?('-------------')
+          next if !content_section || row.include?('------------')
+          filing = filing_for_index_row(row)
+          filings << filing unless filing.nil?
+        end
+      end
+    end
+
+    def self.filing_for_index_row(row)
+      data = row.split(/   /).reject(&:blank?).map(&:strip)
+      data = row.split(/  /).reject(&:blank?).map(&:strip) if data.count == 4
+      data.delete_at(1) if data[1][0] == '/'
+      return nil unless Regexp.new(/\d{8}/).match(data[3])
+      unless data[4][0..3] == 'http'
+        data[4] = "http://www.sec.gov/Archives/#{ data[4] }"
+      end
+      Filing.new(
+        term: data[1],
+        cik: data[2],
+        date: Date.parse(data[3]),
+        link: data[4]
+      )
+    end
+
     def self.uri_for_recent(start = 0, count = 100)
       SecURI.browse_edgar_uri(
         action: :getcurrent,
@@ -68,7 +112,7 @@ module SecQuery
     def self.parse_rss(rss, &blk)
       feed = RSS::Parser.parse(rss, false)
       feed.entries.each do |entry|
-        filing = Filing.new({
+        filing = Filing.new(
           cik: entry.title.content.match(/\((\w{10})\)/)[1],
           file_id: entry.id.content.split('=').last,
           term:  entry.category.term,
@@ -76,7 +120,7 @@ module SecQuery
           summary: entry.summary.content,
           date: DateTime.parse(entry.updated.content.to_s),
           link: entry.link.href.gsub('-index.htm', '.txt')
-        })
+        )
         blk.call(filing)
       end
     end
