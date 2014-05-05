@@ -14,7 +14,7 @@ describe SecQuery::Filing do
   end
 
   describe '::filings_for_index' do
-    let(:index) { File.read('./spec/sec_query/test.idx') }
+    let(:index) { File.read('./spec/support/idx/test.idx') }
     let(:filing1) { SecQuery::Filing.filings_for_index(index).first }
 
     it 'parses all of the filings' do
