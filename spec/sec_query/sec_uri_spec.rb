@@ -36,14 +36,14 @@ describe SecQuery::SecURI do
   end
 
   describe 'Date additions' do
-    subject(:d) { Date.parse('2014-04-26') }
+    subject(:d) { Date.parse('2012-04-26') }
 
     it 'calculates the correct quarter' do
       expect(d.quarter).to eq(2)
     end
 
     it 'calculates the correct sec formatted path uri for a date' do
-      expect(d.to_sec_uri_format).to eq('2014/QTR2/company.20140426.idx')
+      expect(d.to_sec_uri_format).to eq('2012/QTR2/company.20120426.idx')
     end
   end
 end
