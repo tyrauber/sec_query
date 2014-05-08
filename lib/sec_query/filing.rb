@@ -155,5 +155,16 @@ module SecQuery
       end
       filings
     end
+
+    def content(&error_blk)
+      @content ||= RestClient.get(self.link)
+    rescue RestClient::ResourceNotFound => e
+      puts "404 Resource Not Found: Bad link #{ self.link }"
+      if block_given?
+        error_blk.call(e, self)
+      else
+        raise e
+      end
+    end
   end
 end

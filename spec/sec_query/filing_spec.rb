@@ -110,17 +110,32 @@ describe SecQuery::Filing do
         {cik: "0001007844", file_id: "0001104659-03-004723"}
       ]
     }}
-  
+
     let(:entity) {SecQuery::Entity.find(query[:cik])}
-  
+
     describe "Filings", vcr: { cassette_name: "Steve Jobs"} do
       it "should respond to filings" do
         entity.should respond_to(:filings)
         entity.filings.should be_kind_of(Array)
       end
-    
+
       it "should be valid filing" do
         is_valid_filing?(entity.filings.first)
+      end
+    end
+
+    describe '#content', vcr: { cassette_name: 'content' } do
+      it 'returns content of the filing by requesting the link' do
+        f = Filing.new(
+          cik: 123,
+          title: 'test filing title',
+          summary: 'test filing',
+          link: 'http://www.sec.gov/Archives/edgar/data/1572871/000114036114019536/0001140361-14-019536.txt',
+          term: '4',
+          date: Date.today,
+          file_id: 1
+        )
+        expect(f.content).to eq(File.read('./spec/support/filings/filing.txt'))
       end
     end
   end
