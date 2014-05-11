@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'vcr', '~> 2.9'
   s.add_development_dependency 'webmock', '~> 1.17'
   s.add_development_dependency 'rubocop', '~> 0.20'
-  s.add_development_dependency 'addressable', '~> 2.3'
+  s.add_runtime_dependency 'addressable', '~> 2.3'
   s.add_runtime_dependency 'rest-client', '~> 1.6'
   s.add_runtime_dependency 'nokogiri', '~> 1.6'
 end
