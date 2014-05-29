@@ -53,6 +53,10 @@ describe SecQuery::Filing do
       expect(filing1.link)
         .to eq('http://www.sec.gov/Archives/edgar/data/1551138/0001144204-12-064668.txt')
     end
+
+    it 'returns nil if for_date is run on a market close day' do
+      expect(SecQuery::Filing.for_date(Date.parse('20120101'))).to eq(nil)
+    end
   end
 
   describe '::recent', vcr: { cassette_name: 'recent' } do

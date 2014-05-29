@@ -59,6 +59,7 @@ module SecQuery
           filings_for_index(file).each(&blk)
         end
       end
+    rescue Net::FTPTempError
     end
 
     def self.filings_for_index(index)
