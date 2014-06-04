@@ -48,6 +48,7 @@ module SecQuery
     def self.for_date(date, &blk)
       ftp = Net::FTP.new('ftp.sec.gov')
       ftp.login
+      ftp.passive = true
       file_name = ftp.nlst("edgar/daily-index/#{ date.to_sec_uri_format }*")[0]
       ftp.close
       open("ftp://ftp.sec.gov/#{ file_name }") do |file|

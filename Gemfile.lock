@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    sec_query (1.0.8)
+    sec_query (1.0.9)
       addressable (~> 2.3)
       nokogiri (~> 1.6)
       rest-client (~> 1.6)
