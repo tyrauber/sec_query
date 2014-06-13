@@ -78,7 +78,7 @@ module SecQuery
     def self.filing_for_index_row(row)
       data = row.split(/   /).reject(&:blank?).map(&:strip)
       data = row.split(/  /).reject(&:blank?).map(&:strip) if data.count == 4
-      data[1].gsub!('/ADV', '')
+      data[1].gsub!('/ADV', '').gsub!('/FI', '')
       data.delete_at(1) if data[1][0] == '/'
       return nil unless Regexp.new(/\d{8}/).match(data[3])
       unless data[4][0..3] == 'http'
