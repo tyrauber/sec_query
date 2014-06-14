@@ -61,6 +61,7 @@ module SecQuery
         end
       end
     rescue Net::FTPTempError
+      warn "[Net::FTPTempError]: no index of filings for #{ date }"
     end
 
     def self.filings_for_index(index)
