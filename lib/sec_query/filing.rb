@@ -77,10 +77,17 @@ module SecQuery
     def self.filing_for_index_row(row)
       data = row.split(/   /).reject(&:blank?).map(&:strip)
       data = row.split(/  /).reject(&:blank?).map(&:strip) if data.count == 4
+      return nil unless data[0] and data[1] and data[2] and data[3] and data[4]
       data.delete_at(1) if data[1][0] == '/'
       return nil unless Regexp.new(/\d{8}/).match(data[3])
+      return nil if data[4] == nil
       unless data[4][0..3] == 'http'
         data[4] = "http://www.sec.gov/Archives/#{ data[4] }"
+      end
+      begin
+        Date.parse(data[3])
+      rescue ArgumentError
+        return nil
       end
       Filing.new(
         term: data[1],
