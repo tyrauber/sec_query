@@ -53,7 +53,7 @@ module SecQuery
           content['formerly_names'] = content.delete('formerly_names')['names']
         end
         content['addresses']['address'].each do |address|
-          content["#{address['type']}_address"] = address
+          content["#{address['type']}_address"] = address unless address.nil?
         end
         return content
       else
