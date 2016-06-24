@@ -83,6 +83,8 @@ module SecQuery
       self.host = 'www.sec.gov'
       self.scheme = 'http'
       self.path = 'cgi-bin'
+      self.use_ssl = true
+      self.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
 
     def []=(key, value)
