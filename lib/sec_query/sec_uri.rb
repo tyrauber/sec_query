@@ -83,6 +83,7 @@ module SecQuery
       self.host = 'www.sec.gov'
       self.scheme = 'https'
       self.path = 'cgi-bin'
+      
     end
 
     def []=(key, value)
