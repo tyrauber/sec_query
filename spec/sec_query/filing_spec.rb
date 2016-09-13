@@ -5,12 +5,12 @@ require 'spec_helper'
 describe SecQuery::Filing do
   it '::uri_for_recent' do
     expect(SecQuery::Filing.uri_for_recent.to_s)
-      .to eq('http://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&company&count=100&output=atom&owner=include&start=0')
+      .to eq('https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&company&count=100&output=atom&owner=include&start=0')
   end
 
   it '::uri_for_cik' do
     expect(SecQuery::Filing.uri_for_cik('testing').to_s)
-      .to eq('http://www.sec.gov/cgi-bin/browse-edgar?CIK=testing&action=getcompany&company&count=100&output=atom&owner=include&start=0')
+      .to eq('https://www.sec.gov/cgi-bin/browse-edgar?CIK=testing&action=getcompany&company&count=100&output=atom&owner=include&start=0')
   end
 
   describe '::filings_for_index' do
@@ -23,7 +23,7 @@ describe SecQuery::Filing do
 
     it 'correctly parses out the link' do
       expect(filing1.link)
-        .to eq('http://www.sec.gov/Archives/edgar/data/38723/0000038723-14-000001.txt')
+        .to eq('https://www.sec.gov/Archives/edgar/data/38723/0000038723-14-000001.txt')
     end
 
     it 'correctly parses out the cik' do
@@ -51,7 +51,7 @@ describe SecQuery::Filing do
       expect(filing1.cik).to eq('1551138')
       expect(filing1.date).to eq(Date.parse('20121123'))
       expect(filing1.link)
-        .to eq('http://www.sec.gov/Archives/edgar/data/1551138/0001144204-12-064668.txt')
+        .to eq('https://www.sec.gov/Archives/edgar/data/1551138/0001144204-12-064668.txt')
     end
 
     it 'returns nil if for_date is run on a market close day' do
@@ -134,7 +134,7 @@ describe SecQuery::Filing do
           cik: 123,
           title: 'test filing title',
           summary: 'test filing',
-          link: 'http://www.sec.gov/Archives/edgar/data/1572871/000114036114019536/0001140361-14-019536.txt',
+          link: 'https://www.sec.gov/Archives/edgar/data/1572871/000114036114019536/0001140361-14-019536.txt',
           term: '4',
           date: Date.today,
           file_id: 1
