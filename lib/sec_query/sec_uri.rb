@@ -81,7 +81,7 @@ module SecQuery
 
     def initialize
       self.host = 'www.sec.gov'
-      self.scheme = 'http'
+      self.scheme = 'https'
       self.path = 'cgi-bin'
     end
 

@@ -82,7 +82,7 @@ module SecQuery
       return nil unless Regexp.new(/\d{8}/).match(data[3])
       return nil if data[4] == nil
       unless data[4][0..3] == 'http'
-        data[4] = "http://www.sec.gov/Archives/#{ data[4] }"
+        data[4] = "https://www.sec.gov/Archives/#{ data[4] }"
       end
       begin
         Date.parse(data[3])

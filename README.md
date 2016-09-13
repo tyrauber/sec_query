@@ -6,6 +6,10 @@ Look-up an Entity - person or company - by Central Index Key (CIK), stock symbol
 
 Additionally retrieve some, or all, Relationships, Transactions and Filings as recorded by the SEC.
 
+## Note: 9/13/16, SEC.GOV embraces SSL!
+
+On or before Septmember 13th, 2016, the SEC.gov updated their site to use SSL (Huzzah!). Version 1.2.0 addresses this change. All versions less than 1.2.0, will cease to function as expected. Update immediately.
+
 ## Installation
 
 To install the 'sec_query' Ruby Gem run the following command at the terminal prompt.
