@@ -28,9 +28,29 @@ If running 'sec_query' from the command prompt in irb:
 
 ## Functionality
 
-### FIND COMPANY:
+### Entity:
 
-#### By Stock Symbol:
+An Sec::Entity instance contains the following attributes:
+
+* cik
+* name
+* mailing_address
+* business_adddress
+* assigned_sic
+* assigned_sic_desc
+* assigned_sic_href
+* assitant_director
+* cik_href
+* formerly_name
+* state_location
+* state_location_href
+* state_of_incorporation
+
+#### Class Methods
+
+##### .find 
+
+###### By Stock Symbol:
 
 `SecQuery::Entity.find("aapl")`
 
@@ -38,7 +58,7 @@ Or:
 
 `SecQuery::Entity.find({:symbol=> "aapl"})`
 
-#### By Name:
+###### By Name:
 
 `SecQuery::Entity.find("Apple, Inc.")`
 
@@ -46,7 +66,7 @@ Or:
 
 `SecQuery::Entity.find({:name=> "Apple, Inc."})`
 
-#### By Central Index Key, CIK:
+######  Central Index Key, CIK
 
 `SecQuery::Entity.find( "0000320193")`
 
@@ -54,7 +74,7 @@ Or:
 
 `SecQuery::Entity.find({:cik=> "0000320193"})`
 
-#### FIND PERSON:
+###### By First, Middle and Last Name:
 
 By First, Middle and Last Name.
 
@@ -62,62 +82,49 @@ By First, Middle and Last Name.
 
 Middle initial or name is optional, but helps when there are multiple results for First and Last Name.
 
-### RELATIONSHIPS, TRANSACTIONS, FILINGS
+#### Instance Methods
 
-To return everything - All Relationships, Transactions and Filings - that the SEC Edgar system has stored on a company or person, do any of the following commands (They all do the same thing.):
+##### .filings
 
-`SecQuery::Entity.find("AAPL",  true)`
+Returns a list of Sec::Filing instances for an Sec::Entity
 
-`SecQuery::Entity.find("AAPL",  true, true, true)`
+### Sec::Filing
 
-`SecQuery::Entity.find("AAPL", {:relationships=> true, :transactions=> true, :filings=>true})`
+SecQuery::Filing instance may contains the following attributes:
 
-`SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> true, :filings=>true)`
+* cik
+* title
+* symmary
+* link
+* term
+* date
+* file_id
 
-`SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> {:start=> 0, :count=> 80}, :filings=>{:start=> 0, :count=> 80})`
+#### Class Methods
 
-You may also limit either the transactions or filings by adding the :limit to the transaction or filing arguements.
+##### .for_date
 
-For example,
+Find filings by a specific Date:
 
-`SecQuery::Entity.find("AAPL", :relationships=> true, :transactions=> {:start=> 0, :count=>20, :limit=> 20}, :filings=>{:start=> 0, :count=> 20, :limit=> 20})`
+`SecQuery::Filing.for_date(Date.parse('20121123'))`
 
-The above query will only return the last 20 transactions and filings.  This is helpful when querying companies that may have thousands or tens of thousands of transactions or filings.
+Returns a list of SecQuery::Filing instances.
 
-## Classes
+##### .recent
 
-This gem contains four classes - Entity, Relationship, Transaction and Filing.  Each Class contains the listed fields. (Everything I could parse out of the query results.)
+Find filings by a specific Date:
 
-* Entity
+`SecQuery::Filing.recent(start: 0, count: 10, limit: 10)`
 
-`:first, :middle, :last, :name, :symbol, :cik, :url, :type, :sic, :location, :state_of_inc, :formerly, :mailing_address, :business_address, :relationships, :transactions, :filings`
+Returns the most recent filings. Use start, count and limit to iterate through recent filings.
 
-* Relationship
+#### Instance Methods
 
-`:name, :position, :date, :cik`
+##### .content
 
-* Transaction
+`SecQuery::Filing.recent(start: 0, count: 1, limit: 1).first.content`
 
-`:filing_number, :code, :date, :reporting_owner, :form, :type, :modes, :shares, :price, :owned, :number, :owner_cik, :security_name, :deemed, :exercise, :nature, :derivative, :underlying_1, :exercised,	:underlying_2, :expires, :underlying_3`
-
-* Filing
-
-`:cik, :title, :summary, :link, :term, :date, :file_id`
-
-Filings can are fetched a few different ways. Here are some of the supported
-methods:
-
-```rb
-# prints the links for the most recent filings
-SecQuery::Filing.recent do |filing|
-  p filing.link
-end
-
-# prints all of the links for cik 0000704051 (LEGG MASON, INC.)
-SecQuery::Filing.for_cik('0000704051') do |filing|
-  p filing.link
-end
-```
+Returns the actual text content of any Sec::Filing instance.
 
 ## To Whom It May Concern at the SEC
 

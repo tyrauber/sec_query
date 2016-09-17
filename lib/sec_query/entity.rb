@@ -19,10 +19,6 @@ module SecQuery
       Filing.find(@cik)
     end
 
-    def transactions
-      Transaction.find(@cik)
-    end
-
     def self.query(url)
       RestClient.get(url) do |response, request, result, &block|
         case response.code

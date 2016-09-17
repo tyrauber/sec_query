@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.license       = 'MIT'
   s.homepage    = 'https://github.com/tyrauber/sec_query'
   s.summary     = 'A ruby gem for querying the United States Securities and Exchange Commission Edgar System.'
-  s.description = 'Search for company or person, by name, symbol or Central Index Key (CIK), and retrieve relationships, transactions and filings.'
+  s.description = 'Search for company or person, by name, symbol or Central Index Key (CIK), and retrieve filings.'
 
   s.rubyforge_project = 'sec_query'
   s.files         = `git ls-files`.split("\n")
