@@ -88,21 +88,6 @@ describe SecQuery::Filing do
   describe "::find" do
     let(:query){{
      name: "JOBS STEVEN P", :cik => "0001007844",
-      relationships:[
-        {cik: "0000320193", name: "APPLE INC"},
-        {cik: "0001001039", name: "WALT DISNEY CO/"},
-        {cik: "0001002114", name: "PIXAR \\CA\\"}
-      ],
-      transactions:[
-        {filing_number: "0001181431-07-052839", reporting_owner: "APPLE INC", shares:120000.0},
-        {filing_number: "0001181431-07-052839", reporting_owner: "APPLE INC", shares: 40000.0},
-        {filing_number: "0001181431-07-052839", reporting_owner: "APPLE INC", shares: 40000.0},
-        {filing_number: "0001181431-07-052839", reporting_owner: "APPLE INC", shares: 40000.0},
-        {filing_number: "0001181431-06-028746", reporting_owner: "WALT DISNEY CO/", shares: 138000004.0},
-        {filing_number: "0001356184-06-000008", reporting_owner: "PIXAR \\CA\\", shares: 60000002.0},
-        {filing_number: "0001181431-06-019230", reporting_owner: "APPLE COMPUTER INC", shares: 4573553.0},
-        {filing_number: "0001181431-06-028747", reporting_owner: "WALT DISNEY CO/", shares: 0.0}
-      ],
       filings:[
         {cik: "0001007844", file_id: "0001181431-07-052839"},
         {cik: "0001007844", file_id: "0001356184-06-000008"},
