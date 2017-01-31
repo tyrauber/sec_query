@@ -25,9 +25,9 @@ module SecQuery
 
     def self.for_date(date)
       instance = SecURI.new
-      instance.scheme = 'ftp'
-      instance.host = 'ftp.sec.gov'
-      instance.path = "edgar/daily-index/#{ date.to_sec_uri_format }"
+      instance.host = 'www.sec.gov'
+      instance.scheme = 'https'
+      instance.path = "Archives/edgar/daily-index/#{ date.to_sec_uri_format }"
       instance
     end
 

@@ -13,25 +13,24 @@ describe SecQuery::Filing do
       .to eq('https://www.sec.gov/cgi-bin/browse-edgar?CIK=testing&action=getcompany&company&count=100&output=atom&owner=include&start=0')
   end
 
-  describe '::filings_for_index' do
-    let(:index) { File.read('./spec/support/idx/test.idx') }
-    let(:filing1) { SecQuery::Filing.filings_for_index(index).first }
+  describe '::for_date', vcr: { cassette_name: 'idx' } do
+    let(:index) { SecQuery::Filing.for_date(Date.parse('20161230')) }
 
     it 'parses all of the filings' do
-      expect(SecQuery::Filing.filings_for_index(index).count).to eq(4628)
+      expect(index.count).to eq(2554)
     end
 
     it 'correctly parses out the link' do
-      expect(filing1.link)
-        .to eq('https://www.sec.gov/Archives/edgar/data/38723/0000038723-14-000001.txt')
+      expect(index.first.link)
+        .to match(/https:\/\/www.sec.gov\/Archives\/edgar\/data\//)
     end
 
     it 'correctly parses out the cik' do
-      expect(filing1.cik).to eq('38723')
+      expect(index.first.cik).to eq('1605941')
     end
 
     it 'correctly parses out the term' do
-      expect(filing1.term).to eq('424B3')
+      expect(index.first.term).to eq('N-CSR')
     end
   end
 
@@ -95,17 +94,11 @@ describe SecQuery::Filing do
     end
     
     describe '#content', vcr: { cassette_name: 'content' } do
+      let(:index) { SecQuery::Filing.for_date(Date.parse('20161230')) }
+      
       it 'returns content of the filing by requesting the link' do
-        f = Filing.new(
-          cik: 123,
-          title: 'test filing title',
-          summary: 'test filing',
-          link: 'https://www.sec.gov/Archives/edgar/data/1572871/000114036114019536/0001140361-14-019536.txt',
-          term: '4',
-          date: Date.today,
-          file_id: 1
-        )
-        expect(f.content).to eq(File.read('./spec/support/filings/filing.txt'))
+        f = Filing.new(link: index.first.link)
+        expect(f.content).to match(/^(<SEC-DOCUMENT>)/)
       end
     end
   end
