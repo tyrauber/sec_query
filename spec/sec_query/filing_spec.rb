@@ -35,30 +35,6 @@ describe SecQuery::Filing do
     end
   end
 
-  describe '::for_date' do
-    let(:filings) do
-      [].tap do |filings|
-        SecQuery::Filing.for_date(Date.parse('20121123')) do |f|
-          filings << f
-        end
-      end
-    end
-
-    let(:filing1) { filings.first }
-
-    it 'correctly parses a filing from a zipped company index' do
-      expect(filing1.term).to eq('4')
-      expect(filing1.cik).to eq('1551138')
-      expect(filing1.date).to eq(Date.parse('20121123'))
-      expect(filing1.link)
-        .to eq('https://www.sec.gov/Archives/edgar/data/1551138/0001144204-12-064668.txt')
-    end
-
-    it 'returns nil if for_date is run on a market close day' do
-      expect(SecQuery::Filing.for_date(Date.parse('20120101'))).to eq(nil)
-    end
-  end
-
   describe '::recent', vcr: { cassette_name: 'recent' } do
     let(:filings) { [] }
 
