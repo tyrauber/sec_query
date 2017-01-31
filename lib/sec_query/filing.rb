@@ -134,12 +134,14 @@ module SecQuery
       end
     end
 
-    def self.find(cik, start = 0, count = 80)
+    def self.find(cik, start = 0, count = 80, args={})
       temp = {}
       temp[:url] = SecURI.browse_edgar_uri({cik: cik})
       temp[:url][:action] = :getcompany
       temp[:url][:start] = start
       temp[:url][:count] = count
+      args.each {|k,v| temp[:url][k]=v }
+      
       response = Entity.query(temp[:url].output_atom.to_s)
       document = Nokogiri::HTML(response)
       parse(cik, document)

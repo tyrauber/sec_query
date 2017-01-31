@@ -15,8 +15,8 @@ module SecQuery
       end
     end
 
-    def filings
-      Filing.find(@cik)
+    def filings(args={})
+      Filing.find(@cik, 0, 80, args)
     end
 
     def self.query(url)

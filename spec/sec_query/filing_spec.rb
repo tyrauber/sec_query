@@ -86,33 +86,38 @@ describe SecQuery::Filing do
   end
 
   describe "::find" do
-    let(:query){{
-     name: "JOBS STEVEN P", :cik => "0001007844",
-      filings:[
-        {cik: "0001007844", file_id: "0001181431-07-052839"},
-        {cik: "0001007844", file_id: "0001356184-06-000008"},
-        {cik: "0001007844", file_id: "0001193125-06-103741"},
-        {cik: "0001007844", file_id: "0001181431-06-028747"},
-        {cik: "0001007844", file_id: "0001181431-06-028746"},
-        {cik: "0001007844", file_id: "0001181431-06-019230"},
-        {cik: "0001007844", file_id: "0001193125-06-019727"},
-        {cik: "0001007844", file_id: "0001104659-03-004723"}
-      ]
-    }}
-
-    let(:entity) {SecQuery::Entity.find(query[:cik])}
-
-    describe "Filings", vcr: { cassette_name: "Steve Jobs"} do
-      it "should respond to filings" do
-        entity.should respond_to(:filings)
-        entity.filings.should be_kind_of(Array)
+    shared_examples_for "it found filings" do
+      it "should return an array of filings" do
+        filings.should be_kind_of(Array)
       end
 
-      it "should be valid filing" do
-        is_valid_filing?(entity.filings.first)
+      it "the filings should be valid" do
+        is_valid_filing?(filings.first)
       end
     end
 
+    let(:cik){"0000320193"}
+    
+    context "when querying by cik" do
+      let(:filings){ SecQuery::Filing.find(cik) }
+
+      describe "Filings", vcr: { cassette_name: "Steve Jobs"} do
+        it_behaves_like "it found filings"
+      end
+    end
+    
+    context "when querying cik and by type param" do
+      let(:filings){ SecQuery::Filing.find(cik, 0, 40, { type: "10-K" }) }
+
+      describe "Filings", vcr: { cassette_name: "Steve Jobs"} do
+        it_behaves_like "it found filings"
+
+        it "should only return filings of type" do
+          filings.first.term.should == "10-K"
+        end
+      end
+    end
+    
     describe '#content', vcr: { cassette_name: 'content' } do
       it 'returns content of the filing by requesting the link' do
         f = Filing.new(
