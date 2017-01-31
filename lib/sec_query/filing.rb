@@ -45,6 +45,14 @@ module SecQuery
       return
     end
 
+    def self.for_date(date, &blk)
+      open(SecURI.for_date(date).to_s) do |file|
+        filings_for_index(file.read).each(&blk)
+      end
+    rescue OpenURI::HTTPError
+      return
+    end
+
     def self.filings_for_index(index)
       [].tap do |filings|
         content_section = false

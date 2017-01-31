@@ -4,7 +4,6 @@
 require 'active_support/all'
 require 'addressable/uri'
 require 'open-uri'
-require 'net/ftp'
 require 'rest-client'
 require 'rss'
 require 'nokogiri'
