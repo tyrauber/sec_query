@@ -102,14 +102,6 @@ SecQuery::Filing instance may contains the following attributes:
 
 #### Class Methods
 
-##### .for_date
-
-Find filings by a specific Date:
-
-`SecQuery::Filing.for_date(Date.parse('20121123'))`
-
-Returns a list of SecQuery::Filing instances.
-
 ##### .recent
 
 Find filings by a specific Date:

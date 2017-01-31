@@ -45,23 +45,6 @@ module SecQuery
       return
     end
 
-    def self.for_date(date, &blk)
-      ftp = Net::FTP.new('ftp.sec.gov')
-      ftp.login
-      file_name = ftp.nlst("edgar/daily-index/#{ date.to_sec_uri_format }*")[0]
-      ftp.close
-      open("ftp://ftp.sec.gov/#{ file_name }") do |file|
-        if file_name[-2..-1] == 'gz'
-          gz_reader = Zlib::GzipReader.new(file)
-          gz_reader.rewind
-          filings_for_index(gz_reader).each(&blk)
-        else
-          filings_for_index(file).each(&blk)
-        end
-      end
-    rescue Net::FTPTempError
-    end
-
     def self.filings_for_index(index)
       [].tap do |filings|
         content_section = false
