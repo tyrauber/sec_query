@@ -104,19 +104,16 @@ SecQuery::Filing instance may contains the following attributes:
 
 ##### .recent
 
-Find filings by a specific Date:
+Find recent filings:
 
-`SecQuery::Filing.recent(start: 0, count: 10, limit: 10)`
+```
+filings = []
+SecQuery::Filing.recent(start: 0, count: 10, limit: 10) do |filing|
+  filings.push filing
+end
+```
 
-Returns the most recent filings. Use start, count and limit to iterate through recent filings.
-
-#### Instance Methods
-
-##### .content
-
-`SecQuery::Filing.recent(start: 0, count: 1, limit: 1).first.content`
-
-Returns the actual text content of any Sec::Filing instance.
+Requires a block. Returns the most recent filings. Use start, count and limit to iterate through recent filings.
 
 ## To Whom It May Concern at the SEC
 
