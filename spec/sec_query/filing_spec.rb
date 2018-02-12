@@ -63,7 +63,7 @@ describe SecQuery::Filing do
   describe "::find" do
     shared_examples_for "it found filings" do
       it "should return an array of filings" do
-        filings.should be_kind_of(Array)
+        expect(filings).to be_kind_of(Array)
       end
 
       it "the filings should be valid" do
@@ -88,7 +88,7 @@ describe SecQuery::Filing do
         it_behaves_like "it found filings"
 
         it "should only return filings of type" do
-          filings.first.term.should == "10-K"
+          expect(filings.first.term).to eq "10-K"
         end
       end
     end
