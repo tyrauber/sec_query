@@ -15,7 +15,7 @@ module SecQuery
     end
 
     def self.fetch(uri)
-      document = Nokogiri::HTML(open(uri))
+      document = Nokogiri::HTML(open(uri.gsub('http:', 'https:')))
       filing_date = document.xpath('//*[@id="formDiv"]/div[2]/div[1]/div[2]').text
       accepted_date = document.xpath('//*[@id="formDiv"]/div[2]/div[1]/div[4]').text
       period_of_report = document.xpath('//*[@id="formDiv"]/div[2]/div[2]/div[2]').text
@@ -49,7 +49,7 @@ module SecQuery
       format_files_table.xpath('//tr').each_with_index do |row, i|
         rows[i] = {}
         row.xpath('td').each_with_index do |td, j|
-          if td.children.first&.name == 'a'
+          if td.children.first && td.children.first.name == 'a'
             relative_url = td.children.first.attributes.first[1].value
             rows[i][headers[j]] = {
                 'link' => "https://www.sec.gov#{relative_url}",
