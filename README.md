@@ -115,6 +115,27 @@ end
 
 Requires a block. Returns the most recent filings. Use start, count and limit to iterate through recent filings.
 
+### Sec::FilingDetail
+Represents the deail page for a given filing. 
+Ex: [Filing Detail page](https://www.sec.gov/Archives/edgar/data/320193/000032019317000070/0000320193-17-000070-index.htm) of Apple's Annual Report from 2017
+
+#### Instance Methods
+* link
+* filing_date
+* accepted_date
+* period_of_report
+* sec_access_number
+* document_count
+* format_files
+* data_files
+
+#### Class Methods
+##### .fetch
+```
+appl_10k_details_url = 'https://www.sec.gov/Archives/edgar/data/320193/000032019317000070/0000320193-17-000070-index.htm'
+filing_detail = SecQuery::FilingDetail.fetch(appl_10k_details_url)
+```
+
 ## To Whom It May Concern at the SEC
 
 Over the last decade, I have gotten to know Edgar quite extensively and I have grown quite fond of it and the information it contains. So it is with my upmost respect that I make the following suggestions:
