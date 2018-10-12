@@ -99,6 +99,7 @@ SecQuery::Filing instance may contains the following attributes:
 * term
 * date
 * file_id
+* detail
 
 #### Class Methods
 
