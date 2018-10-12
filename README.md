@@ -116,7 +116,7 @@ end
 Requires a block. Returns the most recent filings. Use start, count and limit to iterate through recent filings.
 
 ### SecQuery::FilingDetail
-Represents the deail page for a given filing. 
+Represents the detail page for a given filing. 
 Ex: [Filing Detail page](https://www.sec.gov/Archives/edgar/data/320193/000032019317000070/0000320193-17-000070-index.htm) of Apple's Annual Report from 2017
 
 #### Instance Methods
