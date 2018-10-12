@@ -88,7 +88,7 @@ Middle initial or name is optional, but helps when there are multiple results fo
 
 Returns a list of Sec::Filing instances for an Sec::Entity
 
-### Sec::Filing
+### SecQuery::Filing
 
 SecQuery::Filing instance may contains the following attributes:
 
@@ -115,7 +115,7 @@ end
 
 Requires a block. Returns the most recent filings. Use start, count and limit to iterate through recent filings.
 
-### Sec::FilingDetail
+### SecQuery::FilingDetail
 Represents the deail page for a given filing. 
 Ex: [Filing Detail page](https://www.sec.gov/Archives/edgar/data/320193/000032019317000070/0000320193-17-000070-index.htm) of Apple's Annual Report from 2017
 
