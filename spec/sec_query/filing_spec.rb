@@ -101,30 +101,6 @@ describe SecQuery::Filing do
         expect(f.content).to match(/^(<SEC-DOCUMENT>)/)
       end
     end
-
-    describe "::last", vcr: { cassette_name: "Steve Jobs"} do
-      let(:cik) { "0000320193" }
-
-      context 'when querying by cik' do
-        let(:filing) { SecQuery::Filing.last(cik) }
-
-        it 'returns the first filing' do
-          expect(filing).to be_kind_of(SecQuery::Filing)
-          is_valid_filing?(filing)
-        end
-      end
-
-      context 'when querying cik and by type param' do
-        let(:filing) { SecQuery::Filing.last(cik,{ type: "10-K" }) }
-
-        describe "Filings", vcr: { cassette_name: "Steve Jobs"} do
-          it "should return filing of type 10-K" do
-            expect(filing).to be_kind_of(SecQuery::Filing)
-            expect(filing.term).to eq "10-K"
-          end
-        end
-      end
-    end
   end
 
   describe '#detail', vcr: { cassette_name: 'Steve Jobs'} do
