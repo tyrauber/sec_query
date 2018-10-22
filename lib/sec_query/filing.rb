@@ -14,6 +14,10 @@ module SecQuery
       end
     end
 
+    def detail
+      @detail ||= FilingDetail.fetch(@link)
+    end
+
     def self.fetch(uri, &blk)
       open(uri) do |rss|
         parse_rss(rss, &blk)

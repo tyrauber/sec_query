@@ -12,6 +12,7 @@ require 'rubygems'
 # internal
 require 'sec_query/entity'
 require 'sec_query/filing'
+require 'sec_query/filing_detail'
 require 'sec_query/document/form_4'
 require 'sec_query/sec_uri'
 require 'sec_query/version'

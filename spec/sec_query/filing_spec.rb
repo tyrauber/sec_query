@@ -102,4 +102,36 @@ describe SecQuery::Filing do
       end
     end
   end
+
+  describe '#detail', vcr: { cassette_name: 'Steve Jobs'} do
+    let(:cik) { '0000320193' }
+    let(:filing) { SecQuery::Filing.find(cik, 0, 1, {type: type}).first }
+    subject(:filing_detail) { filing.detail }
+
+    shared_examples 'Valid SecQuery::FilingDetail' do |filing_type|
+      it 'valid filing detail' do
+        expect(filing_detail).to be_a SecQuery::FilingDetail
+        expect((Date.strptime(subject.filing_date, '%Y-%m-%d') rescue false)).to be_a Date
+        expect((DateTime.strptime(subject.accepted_date, '%Y-%m-%d %H:%M:%S') rescue false)).to be_a DateTime
+        expect((Date.strptime(subject.period_of_report, '%Y-%m-%d') rescue false)).to be_a Date
+        expect(filing_detail.sec_access_number).to match /^[0-9]{10}-[0-9]{2}-[0-9]{6}$/ # ex: 0000320193-18-000100
+        expect(filing_detail.document_count).to be > 0
+
+
+        expect(filing_detail.data_files).not_to be_empty if filing_type == '10-K'
+        expect(filing_detail.data_files).to be_empty if filing_type == '4'
+        expect(filing_detail.format_files).not_to be_empty
+      end
+    end
+
+    context '10-K' do
+      let(:type) { '10-K' }
+      it_behaves_like 'Valid SecQuery::FilingDetail', '10-K'
+    end
+
+    context 'Form 4' do
+      let(:type) { '4' }
+      it_behaves_like 'Valid SecQuery::FilingDetail', '4'
+    end
+  end
 end
