@@ -14,6 +14,18 @@ module SecQuery
       end
     end
 
+    def xml_data_files
+      return @xml_data_files if @xml_data_files
+      return unless data_files
+      @xml_data_files = data_files.select {|f| f['Document']['text'].length > 4 && f['Document']['text'][-4..-1] == '.xml' }
+    end
+
+    def xml_format_files
+      return @xml_format_files if @xml_format_files
+      return unless format_files
+      @xml_format_files = format_files.select {|f| f['Document']['text'].length > 4 && f['Document']['text'][-4..-1] == '.xml' }
+    end
+
     def self.fetch(uri)
       document = Nokogiri::HTML(open(uri.gsub('http:', 'https:')))
       filing_date = document.xpath('//*[@id="formDiv"]/div[2]/div[1]/div[2]').text

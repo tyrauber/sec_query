@@ -18,6 +18,16 @@ module SecQuery
       @detail ||= FilingDetail.fetch(@link)
     end
 
+    def document
+      return @document if @document
+      case term
+      when '4'
+        return unless detail.respond_to?(:xml_format_files) && detail.xml_format_files.any?
+        document_url = detail.xml_format_files.first['Document']['link']
+        @document = Document::Form4.fetch(document_url)
+      end
+    end
+
     def self.fetch(uri, &blk)
       open(uri) do |rss|
         parse_rss(rss, &blk)
