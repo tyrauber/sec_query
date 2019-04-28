@@ -139,7 +139,8 @@ module SecQuery
     end
 
     def self.last(cik, args = {})
-      find(cik, 0, 1, args)&.first
+      filings = find(cik, 0, 1, args)
+      filings.is_a?(Array) ? filings.first : nil
     end
 
     def self.parse(cik, document)
