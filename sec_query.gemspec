@@ -28,6 +28,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'byebug', '~> 9.0'
   s.add_runtime_dependency 'rest-client', '~> 2.0'
   s.add_runtime_dependency 'addressable', '~> 2.5'
-  s.add_runtime_dependency 'nokogiri', '~> 1.7'
+  s.add_runtime_dependency 'nokogiri', '>= 1.8.5'
   s.add_runtime_dependency 'activesupport', '>= 0'
 end
