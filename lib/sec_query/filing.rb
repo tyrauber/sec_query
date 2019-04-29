@@ -142,6 +142,11 @@ module SecQuery
       parse(cik, document)
     end
 
+    def self.last(cik, args = {})
+      filings = find(cik, 0, 1, args)
+      filings.is_a?(Array) ? filings.first : nil
+    end
+
     def self.parse(cik, document)
       filings = []
       if document.xpath('//content').to_s.length > 0
