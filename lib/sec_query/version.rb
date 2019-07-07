@@ -1,5 +1,5 @@
 # encoding: UTF-8
 # => SecQuery::VERSION
 module SecQuery
-  VERSION = "1.3.1"
+  VERSION = "1.4.0"
 end
