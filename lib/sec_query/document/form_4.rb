@@ -107,21 +107,21 @@ module SecQuery
         return @securities if @securities
         @securities = []
         if @document.dig('nonderivativetable')
-          @document.dig('nonderivativetable', 'nonderivativetransaction').each do |transaction|
+          [@document.dig('nonderivativetable', 'nonderivativetransaction')].flatten.each do |transaction|
             security = {}
             security['type'] = transaction.dig('securitytitle', 'value')
-            footnote_id = @document.dig('nonderivativetable', 'nonderivativetransaction').first.dig('securitytitle', 'footnoteid', 'id')
+            footnote_id = transaction.dig('securitytitle', 'footnoteid', 'id')
             if footnote_id && footnotes.any?
               i = footnote_id.gsub('F','').to_i - 1
               security['type_footnote'] = footnotes[i] if footnotes.count > i
             end
 
-            security['transaction_date'] = @document.dig('nonderivativetable', 'nonderivativetransaction').first.dig('transactiondate','value')
+            security['transaction_date'] = transaction.dig('transactiondate','value')
 
             security['coding'] = {}
-            security['coding']['form_type'] = @document.dig('nonderivativetable', 'nonderivativetransaction').first.dig('transactioncoding','transactionformtype')
-            security['coding']['code'] = @document.dig('nonderivativetable', 'nonderivativetransaction').first.dig('transactioncoding','transactioncode')
-            security['coding']['equity_swap_involved'] = @document.dig('nonderivativetable', 'nonderivativetransaction').first.dig('transactioncoding','equityswapinvolved').to_i == 1
+            security['coding']['form_type'] = transaction.dig('transactioncoding','transactionformtype')
+            security['coding']['code'] = transaction.dig('transactioncoding','transactioncode')
+            security['coding']['equity_swap_involved'] = transaction.dig('transactioncoding','equityswapinvolved').to_i == 1
 
             if transaction['transactionamounts']
               security['amounts'] = {}

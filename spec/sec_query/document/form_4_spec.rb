@@ -90,6 +90,27 @@ describe SecQuery::Document::Form4, vcr: { cassette_name: 'form_4' } do
         expect(security['ownership_nature']).to eq({'direct_or_indirect_ownership'=>'D'})
       end
     end
+
+    context 'only one security' do
+      let(:uri) { 'https://www.sec.gov/Archives/edgar/data/314943/000120919118010464/doc4.xml' }
+
+      it 'parses the securities' do
+        expect(securities.count).to eq 1
+        security = securities.first
+        expect(security['type']).to eq 'Common Stock'
+        expect(security['type_footnote']).to be_nil
+        expect((Date.strptime(security['transaction_date'], '%Y-%m-%d') rescue false)).to be_a Date
+        expect(security['coding']).to eq({'form_type'=>'4', 'code'=>'D', 'equity_swap_involved'=>false})
+
+        expect(security['amounts']['shares']).to be_a Integer
+        expect(security['amounts']['price_per_share']).to be_a Float
+        expect(['A', 'D']).to include(security['amounts']['acquired_disposed_code'])
+
+        expect(security['price_per_share_footnote']).to be_nil
+        expect(security['post_transaction_amounts']['shares_owned']).to be > 0
+        expect(security['ownership_nature']).to eq({'direct_or_indirect_ownership'=>'I'})
+      end
+    end
   end
 
   describe '#to_h' do
