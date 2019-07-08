@@ -2,7 +2,7 @@
 include SecQuery
 require 'spec_helper'
 
-describe SecQuery::Document::Form4, vcr: { cassette_name: 'form_4_issuer_aapl' } do
+describe SecQuery::Document::Form4, vcr: { cassette_name: 'form_4' } do
   let(:uri) { 'https://www.sec.gov/Archives/edgar/data/320193/000032019318000137/wf-form4_153877878310747.xml' }
   subject(:document) { SecQuery::Document::Form4.fetch(uri) }
 
@@ -34,6 +34,21 @@ describe SecQuery::Document::Form4, vcr: { cassette_name: 'form_4_issuer_aapl' }
       expect(reporting_owner['is_other']).to eq false
       expect(reporting_owner['other_text']).to eq nil
       expect(reporting_owner['officer_title']).to eq 'COO'
+    end
+
+    context 'multiple reporting_owners' do
+      let(:uri) { 'https://www.sec.gov/Archives/edgar/data/314943/000120919118010464/doc4.xml' }
+
+      it 'parses the (first) reporting owner' do
+        expect(reporting_owner['cik']).to eq '0001067983'
+        expect(reporting_owner['name']).to eq 'BERKSHIRE HATHAWAY INC'
+        expect(reporting_owner['address']).to eq({"street1"=>"3555 FARNAM STREET", "street2"=>nil, "city"=>"OMAHA", "state"=>"NE", "zip_code"=>"68131", "state_description"=>nil})
+        expect(reporting_owner['is_director']).to eq false
+        expect(reporting_owner['is_officer']).to eq false
+        expect(reporting_owner['is_other']).to eq false
+        expect(reporting_owner['other_text']).to eq nil
+        expect(reporting_owner['officer_title']).to eq nil
+      end
     end
   end
 

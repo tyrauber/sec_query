@@ -34,43 +34,55 @@ module SecQuery
       end
 
       def reporting_owner
-        return @reporting_owner if @reporting_owner
-        @reporting_owner = {}
-        @reporting_owner['cik'] = @document.dig('reportingowner', 'reportingownerid', 'rptownercik')
-        @reporting_owner['name'] = @document.dig('reportingowner', 'reportingownerid', 'rptownername')
+        reporting_owners.first || {}
+      end
 
-        if @document.dig('reportingowner', 'reportingowneraddress')
-          @reporting_owner['address'] = {}
-          @reporting_owner['address']['street1'] = @document.dig('reportingowner', 'reportingowneraddress', 'rptownerstreet1')
-          @reporting_owner['address']['street2'] = @document.dig('reportingowner', 'reportingowneraddress', 'rptownerstreet2')
-          @reporting_owner['address']['city'] = @document.dig('reportingowner', 'reportingowneraddress', 'rptownercity')
-          @reporting_owner['address']['state'] = @document.dig('reportingowner', 'reportingowneraddress', 'rptownerstate')
-          @reporting_owner['address']['zip_code'] = @document.dig('reportingowner', 'reportingowneraddress', 'rptownerzipcode')
-          @reporting_owner['address']['state_description'] = @document.dig('reportingowner', 'reportingowneraddress', 'rptownerstatedescription')
-        end
+      def owner_signature
+        @document['ownersignature']
+      end
 
-        if @document.dig('reportingowner', 'reportingownerrelationship', 'isdirector')
-          @reporting_owner['is_director'] = @document.dig('reportingowner', 'reportingownerrelationship', 'isdirector').to_i == 1
-        end
+      def owner_signature_name
+        @document.dig('ownersignature', 'signaturename')
+      end
 
-        if @document.dig('reportingowner', 'reportingownerrelationship', 'isofficer')
-          @reporting_owner['is_officer'] = @document.dig('reportingowner', 'reportingownerrelationship', 'isofficer').to_i == 1
-        end
+      def owner_signature_date
+        @document.dig('ownersignature', 'signaturedate')
+      end
 
-        if @document.dig('reportingowner', 'reportingownerrelationship', 'isother')
-          @reporting_owner['is_other'] = @document.dig('reportingowner', 'reportingownerrelationship', 'isother').to_i == 1
-        end
+      def reporting_owners
+        return @reporting_owners if @reporting_owners
+        @reporting_owners = [@document.dig('reportingowner')].flatten.map do |doc_hsh|
+          owner_hsh = {}
+          owner_hsh['cik'] = doc_hsh.dig('reportingownerid', 'rptownercik')
+          owner_hsh['name'] = doc_hsh.dig('reportingownerid', 'rptownername')
 
-        @reporting_owner['other_text'] = @document.dig('reportingowner', 'reportingownerrelationship', 'othertext')
-        @reporting_owner['officer_title'] = @document.dig('reportingowner', 'reportingownerrelationship', 'officertitle')
+          if doc_hsh.dig('reportingowneraddress')
+            owner_hsh['address'] = {}
+            owner_hsh['address']['street1'] = doc_hsh.dig('reportingowneraddress', 'rptownerstreet1')
+            owner_hsh['address']['street2'] = doc_hsh.dig('reportingowneraddress', 'rptownerstreet2')
+            owner_hsh['address']['city'] = doc_hsh.dig('reportingowneraddress', 'rptownercity')
+            owner_hsh['address']['state'] = doc_hsh.dig('reportingowneraddress', 'rptownerstate')
+            owner_hsh['address']['zip_code'] = doc_hsh.dig('reportingowneraddress', 'rptownerzipcode')
+            owner_hsh['address']['state_description'] = doc_hsh.dig('reportingowneraddress', 'rptownerstatedescription')
+          end
 
-        if @document.dig('ownersignature', 'signaturename')
-          @reporting_owner['signature'] = {}
-          @reporting_owner['signature']['name'] = @document.dig('ownersignature', 'signaturename')
-          @reporting_owner['signature']['date'] = @document.dig('ownersignature', 'signaturedate')
-        end
+          if doc_hsh.dig('reportingownerrelationship', 'isdirector')
+            owner_hsh['is_director'] = doc_hsh.dig('reportingownerrelationship', 'isdirector').to_i == 1
+          end
 
-        @reporting_owner.any? ? @reporting_owner : nil
+          if doc_hsh.dig('reportingownerrelationship', 'isofficer')
+            owner_hsh['is_officer'] = doc_hsh.dig('reportingownerrelationship', 'isofficer').to_i == 1
+          end
+
+          if doc_hsh.dig('reportingownerrelationship', 'isother')
+            owner_hsh['is_other'] = doc_hsh.dig('reportingownerrelationship', 'isother').to_i == 1
+          end
+
+          owner_hsh['other_text'] = doc_hsh.dig('reportingownerrelationship', 'othertext')
+          owner_hsh['officer_title'] = doc_hsh.dig('reportingownerrelationship', 'officertitle')
+
+          owner_hsh.any? ? owner_hsh : nil
+        end.compact
       end
 
       def remarks
