@@ -137,6 +137,27 @@ appl_10k_details_url = 'https://www.sec.gov/Archives/edgar/data/320193/000032019
 filing_detail = SecQuery::FilingDetail.fetch(appl_10k_details_url)
 ```
 
+## Documents
+### SecQuery::Document::Form4
+Form 4 - STATEMENT OF CHANGES OF BENEFICIAL OWNERSHIP OF SECURITIES
+https://www.sec.gov/files/form4data%2C0.pdf
+#### Fetching a Form4 directly:
+```
+document = SecQuery::Document::Form4.fetch('https://www.sec.gov/Archives/edgar/data/314943/000120919118010464/doc4.xml')
+document.issuer # {"cik"=>"0001534701", "name"=>"Phillips 66", "trading_symbol"=>"PSX"}
+document.reporting_owner # {"cik"=>"0001067983", "name"=>"BERKSHIRE HATHAWAY INC", "address"=>{"street1"=>"3555 FARNAM STREET", "street2"=>nil, "city"=>"OMAHA", "state"=>"NE", "zip_code"=>"68131", "state_description"=>nil}, "is_director"=>false, "is_officer"=>false, "is_other"=>false, "other_text"=>nil, "officer_title"=>nil}
+document.securities # [{"type"=>"Common Stock", "transaction_date"=>"2018-02-13", "coding"=>{"form_type"=>"4", "code"=>"D", "equity_swap_involved"=>false}, "amounts"=>{"shares"=>35000000, "price_per_share"=>93.725, "acquired_disposed_code"=>"D"}, "post_transaction_amounts"=>{"shares_owned"=>45689892}, "ownership_nature"=>{"direct_or_indirect_ownership"=>"I"}}]
+```
+#### Fetching a Form4 via a Filing:
+```
+# Note that `type: 4` here performs a "contains" query in edgar, hence the subsequent `.find` call.
+filing = SecQuery::Entity.find({cik: '0001067983'}).filings(type: '4').find {|f| f.term == '4'}
+#<SecQuery::Filing:0x007f92c1902918 @cik="0001067983", @title="Statement of changes in beneficial ownership of securities", @summary=nil, @link="https://www.sec.gov/Archives/edgar/data/1067983/000120919119040423/0001209191-19-040423-index.htm", @term="4", @date="2019-07-02", @file_id="0001209191-19-040423">
+filing.document.class # SecQuery::Document::Form4
+filing.document.issuer # {"cik"=>"0001067983", "name"=>"BERKSHIRE HATHAWAY INC", "trading_symbol"=>"BRK.A"}
+filing.document.reporting_owner # {"cik"=>"0000315090", "name"=>"BUFFETT WARREN E", "address"=>{"street1"=>"3555 FARNAM STREET", "street2"=>nil, "city"=>"OMAHA", "state"=>"NE", "zip_code"=>"68131", "state_description"=>nil}, "is_director"=>true, "is_officer"=>true, "is_other"=>false, "other_text"=>nil, "officer_title"=>"Chairman and CEO"}
+```
+
 ## To Whom It May Concern at the SEC
 
 Over the last decade, I have gotten to know Edgar quite extensively and I have grown quite fond of it and the information it contains. So it is with my upmost respect that I make the following suggestions:
