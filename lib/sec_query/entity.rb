@@ -37,12 +37,14 @@ module SecQuery
       response = query(temp[:url].output_atom.to_s)
       document = Nokogiri::HTML(response)
       xml = document.xpath("//feed/company-info")
-      Entity.new(parse(xml))
+      parsed_xml =  parse(xml)
+      return if parsed_xml.empty?
+      Entity.new(parsed_xml)
     end
 
     def self.parse(xml)
       content = Hash.from_xml(xml.to_s)
-      if content['company_info'].present?
+      if content&.dig('company_info')&.present?
         content = content['company_info']
         content['name'] = content.delete('conformed_name')
         if content['formerly_names'].present?
