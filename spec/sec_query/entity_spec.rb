@@ -7,7 +7,7 @@ describe SecQuery::Entity do
 
   describe "Company Queries", vcr: { cassette_name: "aapl"} do
 
-    let(:query){{name: "APPLE INC", sic: "3571", symbol: "aapl", cik:"0000320193"}}
+    let(:query){{name: "Apple Inc.", sic: "3571", symbol: "aapl", cik:"0000320193"}}
     
     [:symbol, :cik, :name].each do |key|
       context "when quering by #{key}" do
