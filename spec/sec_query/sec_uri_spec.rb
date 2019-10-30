@@ -28,10 +28,10 @@ describe SecQuery::SecURI do
         .to eq('https://www.sec.gov/cgi-bin/browse-edgar?CIK=AAPL')
     end
 
-    it 'builds a default /browse-edgar/ url with options: "Apple"' do
-      uri = SecQuery::SecURI.browse_edgar_uri('Apple')
+    it 'builds a default /browse-edgar/ url with options: "Apple Inc"' do
+      uri = SecQuery::SecURI.browse_edgar_uri('Apple Inc')
       expect(uri.to_s)
-        .to eq('https://www.sec.gov/cgi-bin/browse-edgar?company=Apple')
+        .to eq('https://www.sec.gov/cgi-bin/browse-edgar?company=Apple%20Inc')
     end
   end
 
