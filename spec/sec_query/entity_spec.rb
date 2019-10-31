@@ -44,6 +44,39 @@ describe SecQuery::Entity do
     end
   end
 
+  describe "Company Queries - Alphabet Inc.", vcr: { cassette_name: "googl"} do
+
+    let(:query){{name: "Alphabet Inc.", sic: "7370", symbol: "googl", cik:"0001652044"}}
+
+    [:symbol, :cik, :name].each do |key|
+      context "when quering by #{key}" do
+        describe "as hash" do
+
+          let(:entity){ SecQuery::Entity.find({ key => query[key] }) }
+
+          it "should be valid" do
+            is_valid?(entity)
+          end
+
+          it "should have a valid mailing address" do
+            is_valid_address?(entity.mailing_address)
+          end
+
+          it "should have a valid business address" do
+            is_valid_address?(entity.business_address)
+          end
+        end
+
+        describe "as string" do
+          it "should be valid" do
+            entity = SecQuery::Entity.find(query[key])
+            is_valid?(entity)
+          end
+        end
+      end
+    end
+  end
+
   describe "People Queries", vcr: { cassette_name: "Steve Jobs"} do
   
     let(:query){ { name: "JOBS STEVEN P", :cik => "0001007844" } }

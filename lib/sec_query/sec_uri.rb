@@ -49,7 +49,7 @@ module SecQuery
       begin Float(string_arg)
         options[:CIK] = string_arg
       rescue
-        if string_arg.length <= 4
+        if string_arg.length <= 5
           options[:CIK] = string_arg
         else
           options[:company] = string_arg.gsub(/[(,?!\''"":.)]/, '')
