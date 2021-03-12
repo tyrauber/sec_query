@@ -19,8 +19,8 @@ module SecQuery
     end
 
     def self.fetch(uri, &blk)
-      open(uri) do |rss|
-        parse_rss(rss, &blk)
+      RestClient::Request.execute(method: :get, url: uri.to_s, timeout: 10) do |response, request, result, &block|
+        parse_rss(response.body, &blk)
       end
     end
 
@@ -50,11 +50,10 @@ module SecQuery
     end
 
     def self.for_date(date, &blk)
-      open(SecURI.for_date(date).to_s) do |file|
-        filings_for_index(file.read).each(&blk)
+      url = SecURI.for_date(date).to_s
+      RestClient::Request.execute(method: :get, url: url, timeout: 10) do |response, request, result, &block|
+        filings_for_index(response.body).each(&blk)
       end
-    rescue OpenURI::HTTPError
-      return
     end
 
     def self.filings_for_index(index)
