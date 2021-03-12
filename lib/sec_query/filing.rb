@@ -19,7 +19,7 @@ module SecQuery
     end
 
     def self.fetch(uri, &blk)
-      RestClient.get(uri) do |response, request, result, &block|
+      RestClient.get(uri.to_s) do |response, request, result, &block|
         parse_rss(response.body, &blk)
       end
     end
